@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Design tokens + base styles.
+
+   The visual identity lives almost entirely in the backdrop scene; everything
+   in the content layer is deliberately quiet so it never competes with it.
+   ========================================================================== */
+
+:root {
+  /* --- palette ------------------------------------------------------------
+     Warm neutrals sampled from the scene rather than pure greys, so the type
+     sits inside the image's world instead of on top of it. */
+  --bone: #f2ebdd;
+  --dim: #c3b7a8;
+  --faint: #8c8074;
+  --ember: #ff8a3c;
+  --ink: #06060c;
+  --ink-soft: #0d0d16;
+  --rule: rgba(242, 235, 221, 0.14);
+  --rule-strong: rgba(242, 235, 221, 0.28);
+
+  /* --- type ---------------------------------------------------------------
+     `ui-serif` resolves to New York on Apple platforms, which is a genuinely
+     refined face. To upgrade later, self-host a woff2 and prepend it here —
+     nothing else in the codebase needs to change. */
+  --font-display: ui-serif, "New York", "Iowan Old Style", Charter,
+    "Hoefler Text", Palatino, Georgia, serif;
+  --font-body: "Avenir Next", "Segoe UI", Roboto, system-ui, -apple-system,
+    sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
+
+  /* --- scene grade --------------------------------------------------------
+     Values dialled in against the real footage. Kept as tokens so the grade
+     can be retuned in one place if the artwork is ever replaced. */
+  --scene-filter: blur(0.9px) brightness(0.95) contrast(1.06) saturate(0.84)
+    hue-rotate(8deg) sepia(0.08);
+  --scene-tint: #ffb43c;
+  --scene-tint-opacity: 0.39;
+  --scene-tint-blend: hue;
+  --grain-opacity: 0.42;
+
+  /* --- layout -------------------------------------------------------------
+     One shared inline padding so the hero text and inner page content sit on
+     the same left edge as you move between pages. */
+  --gutter: clamp(1.5rem, 5vw, 4.5rem);
+  --measure: 68ch;
+
+  color-scheme: dark;
+}
+
+/* --- reset ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.075rem);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+/* --- type ----------------------------------------------------------------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 1.1em;
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--ember);
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+/* Visible, consistent focus ring everywhere — never removed, only restyled. */
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- shared utilities ----------------------------------------------------- */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0;
+}
+
+/* Visible only to screen readers — used for skip links and icon labels. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  transform: translateY(-120%);
+  background: var(--ink);
+  color: var(--bone);
+  padding: 0.7rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,68 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Not found" description="That page doesn't exist.">
+  <div class="wrap">
+    <p class="eyebrow">404</p>
+    <h1>Nothing here</h1>
+    <p class="lede">
+      That page doesn't exist, or it moved during the rebuild. The fire's still
+      going back at the start.
+    </p>
+    <p class="links">
+      <a href="/">Home</a>
+      <a href="/projects/">Projects</a>
+      <a href="/writing/">Writing</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .wrap {
+    min-height: 70svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2.5rem, 7vh, 5rem) var(--gutter) 6rem;
+    max-width: 46rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.02em;
+  }
+
+  .lede {
+    margin: 1.1rem 0 0;
+    max-width: 44ch;
+    color: var(--dim);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+    margin: 2.2rem 0 0;
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease;
+  }
+
+  .links a:hover,
+  .links a:focus-visible {
+    border-bottom-color: var(--ember);
+  }
+</style>

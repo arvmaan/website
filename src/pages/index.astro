@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteNav from "../components/SiteNav.astro";
+import { HERO } from "../consts";
+---
+
+<Base backdrop="video" showHeader={false}>
+  <div class="hero">
+    <h1>{HERO.name}</h1>
+    <p class="tagline">{HERO.tagline}</p>
+    <p class="sub">{HERO.sub}</p>
+    <SiteNav variant="hero" />
+  </div>
+</Base>
+
+<style>
+  /* Anchored bottom-left: the scene keeps its focal area, the type stays calm.
+     `svh` avoids the mobile-browser chrome jump that `vh` causes on scroll. */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--gutter);
+    padding-bottom: clamp(2.5rem, 7vh, 5rem);
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 7.5vw, 5.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 26px rgba(6, 6, 12, 0.7);
+  }
+
+  /* No measure cap — this is one fixed line, not running text, so it should
+     sit on a single line wherever there's room. It still wraps on narrow
+     phones rather than overflowing, and `balance` keeps that break even. */
+  .tagline {
+    margin: 1.1rem 0 0;
+    max-width: none;
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    line-height: 1.55;
+    color: var(--dim);
+    text-wrap: balance;
+    text-shadow: 0 1px 16px rgba(6, 6, 12, 0.8);
+  }
+
+  /* Second line steps down in size and weight so the two read as a pair
+     rather than competing. */
+  .sub {
+    margin: 0.5rem 0 0;
+    max-width: none;
+    font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+    line-height: 1.5;
+    color: var(--faint);
+    text-shadow: 0 1px 16px rgba(6, 6, 12, 0.8);
+  }
+</style>

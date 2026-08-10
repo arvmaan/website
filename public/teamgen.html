@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/assets/favicon.ico/favicon.ico" type="image/x-icon" />
+		<title>TeamGen</title>
+		<meta name="description" content="Create balanced League of Legends teams" />
+		<link rel="stylesheet" href="/assets/css/styles.css" />
+		<link
+			href="https://fonts.googleapis.com/css?family=EB+Garamond&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+
+	<body>
+
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+/>
+
+<style>
+	html,
+	body {
+		background: linear-gradient(
+			120deg,
+			#1f2d46 0%,
+			#263141 30%,
+			#2f2a36 55%,
+			#352428 70%,
+			#3a2024 100%
+		);
+		background-attachment: fixed;
+	}
+</style>
+
+<div class="teamgen-page">
+	<header class="teamgen-hero">
+		<div class="teamgen-hero-inner">
+			<h1 class="teamgen-title">Customs Manager</h1>
+			<p class="teamgen-subtitle">League of Legends custom lobby balancer</p>
+		</div>
+		<div class="teamgen-hero-search">
+			<span>Search roster</span>
+		</div>
+	</header>
+
+	<section class="teamgen-panel">
+		<div class="teamgen-pool">
+			<div class="teamgen-quickbar">
+				<div class="teamgen-quickbar-title">Player Pool</div>
+				<div class="teamgen-quickbar-actions">
+					<select id="teamgen-pool-select" class="teamgen-input teamgen-pool-select"></select>
+					<button id="teamgen-pool-add" class="teamgen-button ghost">Add to roster</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="teamgen-quickbar">
+			<div class="teamgen-quickbar-title">Quick Paste / Export</div>
+			<div class="teamgen-quickbar-actions">
+				<button id="teamgen-toggle-roster" class="teamgen-button ghost">Open</button>
+				<button id="teamgen-export" class="teamgen-button ghost">Copy roster</button>
+				<button id="teamgen-clear" class="teamgen-button ghost">Clear roster</button>
+			</div>
+		</div>
+		<textarea
+			id="teamgen-roster"
+			class="teamgen-roster is-collapsed"
+			placeholder="Paste roster here. Format: name,rank,preferred,offrole (one per line)"
+		></textarea>
+
+		<div class="teamgen-table">
+			<div class="teamgen-header">Player</div>
+			<div class="teamgen-header">Rank (1-10)</div>
+			<div class="teamgen-header">Roles</div>
+			<div class="teamgen-header teamgen-header-quick"></div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 1" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 2" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 3" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 4" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 5" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 6" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 7" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 8" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 9" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+
+			<div class="teamgen-row">
+				<input class="teamgen-input name" type="text" placeholder="Player 10" />
+				<input class="teamgen-input rank" type="number" min="1" max="10" value="5" />
+				<div class="teamgen-role-selector" role="group" aria-label="Select roles">
+					<button class="teamgen-role-button" type="button" data-role="top" title="Top">
+						<img src="/assets/league%20icons/120px-Top_icon.png" alt="Top" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="jgl" title="Jungle">
+						<img src="/assets/league%20icons/Jungle_icon_WR.png" alt="Jungle" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="mid" title="Mid">
+						<img src="/assets/league%20icons/120px-Middle_icon.png" alt="Mid" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="bot" title="Bot">
+						<img src="/assets/league%20icons/Bottom_icon.png" alt="Bot" />
+					</button>
+					<button class="teamgen-role-button" type="button" data-role="sp" title="Support">
+						<img src="/assets/league%20icons/120px-Support_icon.png" alt="Support" />
+					</button>
+					<label class="teamgen-fill-toggle" title="Allow autofill">
+						<input class="autofill" type="checkbox" checked />
+						<img src="/assets/league%20icons/120px-Specialist_icon.png" alt="Autofill" />
+					</label>
+				</div>
+				
+				<input class="preferred" type="hidden" value="" />
+				<input class="offrole" type="hidden" value="" />
+				<div class="teamgen-row-actions">
+					<button class="teamgen-row-button teamgen-row-add" type="button">+</button>
+					<button class="teamgen-row-button teamgen-row-remove" type="button">×</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="teamgen-actions">
+			<button id="teamgen-generate" class="teamgen-button">Generate teams</button>
+			<label class="teamgen-toggle">
+				<input id="teamgen-ignore-roles" type="checkbox" />
+				<span>Ignore roles for balance</span>
+			</label>
+			<div id="teamgen-error" class="teamgen-error" role="alert"></div>
+		</div>
+	</section>
+
+	<section id="teamgen-output" class="teamgen-output">
+		<div class="teamgen-output-card">
+			<h2>Team Blue</h2>
+			<p class="teamgen-output-meta">Waiting for input.</p>
+			<ul class="teamgen-list"></ul>
+		</div>
+		<div class="teamgen-output-card teamgen-output-card-red">
+			<h2>Team Red</h2>
+			<p class="teamgen-output-meta">Waiting for input.</p>
+			<ul class="teamgen-list"></ul>
+		</div>
+	</section>
+</div>
+
+<script>
+	const roles = ["top", "jgl", "mid", "bot", "sp"];
+	const generateButton = document.getElementById("teamgen-generate");
+	const errorBox = document.getElementById("teamgen-error");
+	const rosterBox = document.getElementById("teamgen-roster");
+	const exportButton = document.getElementById("teamgen-export");
+	const clearButton = document.getElementById("teamgen-clear");
+	const ignoreRolesToggle = document.getElementById("teamgen-ignore-roles");
+	const rosterToggle = document.getElementById("teamgen-toggle-roster");
+	const poolSelect = document.getElementById("teamgen-pool-select");
+	const poolAddButton = document.getElementById("teamgen-pool-add");
+	const storageKey = "teamgen-roster-v1";
+	const poolKey = "teamgen-pool-v1";
+	const defaultPoolText = `feebs,5,sup,top
+logan,3,top,jgl
+hano,6,mid,top
+arv,7,top,jgl
+lone,7,top,mid
+daniel,3,top,mid
+jose,8,mid,bot
+willy,10,mid,top
+jacky,5,sup,top
+nik,4,bot,jgl
+cory,9,bot,jgl
+tacet,6,sup,jgl
+pouya,8,jgl,bot`;
+
+	const getRowPlayers = () => {
+		const rows = Array.from(document.querySelectorAll(".teamgen-row"));
+		return rows.map((row) => {
+			const name = row.querySelector(".name").value.trim();
+			const skill = parseInt(row.querySelector(".rank").value, 10);
+			const preferred = row.querySelector(".preferred").value;
+			const offrole = row.querySelector(".offrole").value;
+			const allowAutofill = row.querySelector(".autofill").checked;
+			return { name, skill, preferred, offrole, allowAutofill };
+		});
+	};
+
+	const validatePlayers = (players) => {
+		const seenNames = new Set();
+		for (const [index, player] of players.entries()) {
+			if (!player.name) {
+				return `Player ${index + 1} needs a name.`;
+			}
+			if (seenNames.has(player.name.toLowerCase())) {
+				return `Player ${index + 1} has a duplicate name.`;
+			}
+			seenNames.add(player.name.toLowerCase());
+			if (Number.isNaN(player.skill) || player.skill < 1 || player.skill > 10) {
+				return `Player ${index + 1} rank must be 1-10.`;
+			}
+			if (player.preferred && player.preferred === player.offrole) {
+				return `Player ${index + 1} preferred and offrole must differ.`;
+			}
+			if (!player.allowAutofill && (!player.preferred || !player.offrole)) {
+				return `Player ${index + 1} needs two roles if autofill is off.`;
+			}
+		}
+		return "";
+	};
+
+	const normalizeRole = (value) => {
+		const role = value.trim().toLowerCase();
+		if (role === "adc") return "bot";
+		if (role === "support") return "sp";
+		return role;
+	};
+
+	const setRoleSelection = (row, preferred, offrole) => {
+		const normalizedPreferred = preferred ? normalizeRole(preferred) : "";
+		const normalizedOffrole = offrole ? normalizeRole(offrole) : "";
+		row.querySelector(".preferred").value = normalizedPreferred;
+		row.querySelector(".offrole").value = normalizedOffrole;
+		row.querySelectorAll(".teamgen-role-button").forEach((button) => {
+			const role = button.dataset.role;
+			button.classList.toggle(
+				"is-preferred",
+				normalizedPreferred && role === normalizedPreferred
+			);
+			button.classList.toggle(
+				"is-offrole",
+				normalizedOffrole && role === normalizedOffrole && role !== normalizedPreferred
+			);
+		});
+	};
+
+	const handleRoleClick = (row, role) => {
+		const preferred = row.querySelector(".preferred").value;
+		const offrole = row.querySelector(".offrole").value;
+		let nextPreferred = preferred;
+		let nextOffrole = offrole;
+
+		if (role === preferred) {
+			nextPreferred = "";
+		} else if (role === offrole) {
+			nextOffrole = "";
+		} else if (!preferred) {
+			nextPreferred = role;
+		} else if (!offrole) {
+			nextOffrole = role;
+		} else {
+			nextPreferred = role;
+			nextOffrole = "";
+		}
+
+		setRoleSelection(row, nextPreferred, nextOffrole);
+		saveRoster();
+	};
+
+	const fillRows = (players) => {
+		const rows = Array.from(document.querySelectorAll(".teamgen-row"));
+		rows.forEach((row, index) => {
+			const player = players[index];
+			if (!player) {
+				row.querySelector(".name").value = "";
+				row.querySelector(".rank").value = 5;
+				setRoleSelection(row, "", "");
+				setAutofill(row, true);
+				return;
+			}
+			row.querySelector(".name").value = player.name || "";
+			row.querySelector(".rank").value = player.skill || 5;
+			setRoleSelection(row, player.preferred || "", player.offrole || "");
+			setAutofill(row, player.allowAutofill !== false);
+		});
+	};
+
+	const parseRoster = (text, limit = 10) => {
+		const lines = text
+			.split("\n")
+			.map((line) => line.trim())
+			.filter(Boolean);
+		const players = [];
+
+		for (const line of lines) {
+			const parts = line.split(",").map((part) => part.trim());
+			if (parts.length < 4) {
+				continue;
+			}
+			const [name, rank, preferred, offrole] = parts;
+			players.push({
+				name,
+				skill: parseInt(rank, 10),
+				preferred: normalizeRole(preferred),
+				offrole: normalizeRole(offrole),
+			});
+		}
+
+		return limit ? players.slice(0, limit) : players;
+	};
+
+	const loadPool = () => {
+		const saved = localStorage.getItem(poolKey);
+		if (!saved) {
+			return parseRoster(defaultPoolText, null);
+		}
+		try {
+			const players = JSON.parse(saved);
+			return Array.isArray(players) ? players : [];
+		} catch (error) {
+			return parseRoster(defaultPoolText, null);
+		}
+	};
+
+	const savePool = (players) => {
+		localStorage.setItem(poolKey, JSON.stringify(players));
+	};
+
+	const refreshPoolSelect = (players) => {
+		poolSelect.innerHTML = "";
+		const placeholder = document.createElement("option");
+		placeholder.value = "";
+		placeholder.textContent = "Select player";
+		poolSelect.appendChild(placeholder);
+		players.forEach((player, index) => {
+			const option = document.createElement("option");
+			option.value = String(index);
+			option.textContent = `${player.name} • ${player.preferred}/${player.offrole} • ${player.skill}`;
+			poolSelect.appendChild(option);
+		});
+	};
+
+	const exportRoster = () => {
+		const players = getRowPlayers();
+		const text = players
+			.map((player) => `${player.name},${player.skill},${player.preferred},${player.offrole}`)
+			.join("\n");
+		rosterBox.value = text;
+		rosterBox.select();
+		document.execCommand("copy");
+	};
+
+	const saveRoster = () => {
+		const players = getRowPlayers();
+		localStorage.setItem(storageKey, JSON.stringify(players));
+	};
+
+	const loadRoster = () => {
+		const saved = localStorage.getItem(storageKey);
+		if (!saved) return;
+		try {
+			const players = JSON.parse(saved);
+			if (Array.isArray(players)) {
+				fillRows(players);
+			}
+		} catch (error) {
+			// ignore invalid saved state
+		}
+	};
+
+	const addPlayerToRoster = (player) => {
+		const rows = Array.from(document.querySelectorAll(".teamgen-row"));
+		for (const row of rows) {
+			const nameInput = row.querySelector(".name");
+			if (!nameInput.value.trim()) {
+				row.querySelector(".name").value = player.name || "";
+				row.querySelector(".rank").value = player.skill || 5;
+				setRoleSelection(row, player.preferred || "", player.offrole || "");
+				setAutofill(row, player.allowAutofill !== false);
+				saveRoster();
+				return true;
+			}
+		}
+		return false;
+	};
+
+	const addPlayerToPool = (player) => {
+		const players = loadPool();
+		const exists = players.some(
+			(item) => item.name.toLowerCase() === player.name.toLowerCase()
+		);
+		if (!exists) {
+			players.push(player);
+			savePool(players);
+			refreshPoolSelect(players);
+		}
+	};
+
+	const clearRow = (row) => {
+		row.querySelector(".name").value = "";
+		row.querySelector(".rank").value = 5;
+		setRoleSelection(row, "", "");
+		setAutofill(row, true);
+	};
+
+	const setAutofill = (row, value) => {
+		const toggle = row.querySelector(".autofill");
+		toggle.checked = value;
+		toggle.closest(".teamgen-fill-toggle").classList.toggle("is-off", !value);
+	};
+
+	const createTeamsWithRandomness = (players, iterations = 1000) => {
+		const teamSize = players.length / 2;
+		let bestTeams = null;
+		let bestVariance = Number.POSITIVE_INFINITY;
+		let bestSkills = [0, 0];
+
+		for (let i = 0; i < iterations; i += 1) {
+			const shuffled = [...players].sort(() => Math.random() - 0.5);
+			const team1 = shuffled.slice(0, teamSize);
+			const team2 = shuffled.slice(teamSize);
+			const team1Skill = team1.reduce((sum, player) => sum + player.skill, 0);
+			const team2Skill = team2.reduce((sum, player) => sum + player.skill, 0);
+			const variance = Math.abs(team1Skill - team2Skill);
+
+			if (variance < bestVariance) {
+				bestVariance = variance;
+				bestTeams = [team1, team2];
+				bestSkills = [team1Skill, team2Skill];
+			}
+		}
+
+		return { teams: bestTeams, variance: bestVariance, skills: bestSkills };
+	};
+
+	const roleScore = (player, role) => {
+		const skill = Math.max(1, Math.min(10, player.skill));
+		const preferBoost = (11 - skill) * 3;
+		if (role === player.preferred) {
+			return 120 + preferBoost;
+		}
+		if (role === player.offrole) {
+			return 70 + Math.floor(preferBoost / 2);
+		}
+		return player.allowAutofill ? skill * 4 : -1000;
+	};
+
+	const bestRoleAssignment = (team) => {
+		let bestAssignment = null;
+		let bestScore = -1;
+
+		const backtrack = (index, usedRoles, assignment, score) => {
+			if (index === team.length) {
+				if (score > bestScore) {
+					bestScore = score;
+					bestAssignment = [...assignment];
+				}
+				return;
+			}
+
+			for (const role of roles) {
+				if (usedRoles.has(role)) {
+					continue;
+				}
+				if (!team[index].allowAutofill) {
+					const preferred = team[index].preferred;
+					const offrole = team[index].offrole;
+					if (role !== preferred && role !== offrole) {
+						continue;
+					}
+				}
+				usedRoles.add(role);
+				assignment.push(role);
+				backtrack(
+					index + 1,
+					usedRoles,
+					assignment,
+					score + roleScore(team[index], role)
+				);
+				assignment.pop();
+				usedRoles.delete(role);
+			}
+		};
+
+		backtrack(0, new Set(), [], 0);
+
+		return team.reduce((acc, player, idx) => {
+			acc[player.name] = bestAssignment ? bestAssignment[idx] : "";
+			return acc;
+		}, {});
+	};
+
+	const roleIconMap = {
+		top: "/assets/league%20icons/120px-Top_icon.png",
+		jgl: "/assets/league%20icons/Jungle_icon_WR.png",
+		mid: "/assets/league%20icons/120px-Middle_icon.png",
+		bot: "/assets/league%20icons/Bottom_icon.png",
+		sp: "/assets/league%20icons/120px-Support_icon.png",
+	};
+	const roleLabelMap = {
+		top: "top",
+		jgl: "jgl",
+		mid: "mid",
+		bot: "bot",
+		sp: "sup",
+	};
+
+	const roleOrder = ["top", "jgl", "mid", "bot", "sp"];
+
+	const renderTeam = (card, team, teamSkill, rolesMap) => {
+		const meta = card.querySelector(".teamgen-output-meta");
+		const list = card.querySelector(".teamgen-list");
+		meta.textContent = `Total rank: ${teamSkill}`;
+		list.innerHTML = "";
+
+		const sortedTeam = [...team].sort((a, b) => {
+			const roleA = roleOrder.indexOf(rolesMap[a.name]);
+			const roleB = roleOrder.indexOf(rolesMap[b.name]);
+			return roleA - roleB;
+		});
+
+		sortedTeam.forEach((player) => {
+			const assignedRole = rolesMap[player.name];
+			const roleType =
+				assignedRole === player.preferred
+					? "primary"
+					: assignedRole === player.offrole
+					? "secondary"
+					: "autofill";
+			const item = document.createElement("li");
+			item.classList.add("teamgen-list-item");
+			item.innerHTML = `
+				<div class="teamgen-player-block">
+					<span class="teamgen-player">${player.name}</span>
+					<span class="teamgen-rank">rank ${player.skill}</span>
+				</div>
+				<span class="teamgen-role teamgen-role-${roleType}">
+					<img src="${roleIconMap[assignedRole] || ""}" alt="${assignedRole}" />
+					<span>${roleLabelMap[assignedRole] || assignedRole}</span>
+				</span>
+			`;
+			list.appendChild(item);
+		});
+	};
+
+	generateButton.addEventListener("click", () => {
+		errorBox.textContent = "";
+		const players = getRowPlayers();
+		const error = validatePlayers(players);
+		if (error) {
+			errorBox.textContent = error;
+			return;
+		}
+
+		const { teams, variance, skills } = createTeamsWithRandomness(players, 1200);
+		const [team1, team2] = teams;
+		const ignoreRoles = ignoreRolesToggle.checked;
+		const enforceRoles = team1.concat(team2).some((player) => !player.allowAutofill);
+		const team1Roles =
+			ignoreRoles && !enforceRoles
+				? Object.fromEntries(team1.map((player, idx) => [player.name, roles[idx]]))
+				: bestRoleAssignment(team1);
+		const team2Roles =
+			ignoreRoles && !enforceRoles
+				? Object.fromEntries(team2.map((player, idx) => [player.name, roles[idx]]))
+				: bestRoleAssignment(team2);
+		if (
+			Object.values(team1Roles).some((role) => !role) ||
+			Object.values(team2Roles).some((role) => !role)
+		) {
+			errorBox.textContent =
+				"Unable to assign roles with the current autofill locks. Adjust roles or enable autofill.";
+			return;
+		}
+		const outputCards = document.querySelectorAll(".teamgen-output-card");
+
+		renderTeam(outputCards[0], team1, skills[0], team1Roles);
+		renderTeam(outputCards[1], team2, skills[1], team2Roles);
+		outputCards[0].querySelector(
+			".teamgen-output-meta"
+		).textContent += ` | variance ${variance}`;
+		outputCards[1].querySelector(
+			".teamgen-output-meta"
+		).textContent += ` | variance ${variance}`;
+	});
+
+	rosterBox.addEventListener("change", () => {
+		const players = parseRoster(rosterBox.value, 10);
+		if (!players.length) {
+			errorBox.textContent = "Roster paste must be: name,rank,preferred,offrole per line.";
+			return;
+		}
+		errorBox.textContent = "";
+		fillRows(players);
+		saveRoster();
+	});
+
+	exportButton.addEventListener("click", () => {
+		exportRoster();
+	});
+
+	clearButton.addEventListener("click", () => {
+		rosterBox.value = "";
+		fillRows([]);
+		saveRoster();
+	});
+
+	rosterToggle.addEventListener("click", () => {
+		const isCollapsed = rosterBox.classList.toggle("is-collapsed");
+		rosterToggle.textContent = isCollapsed ? "Open" : "Hide";
+	});
+
+	document.querySelectorAll(".teamgen-input").forEach((input) => {
+		input.addEventListener("change", saveRoster);
+	});
+
+	loadRoster();
+
+	const poolPlayers = loadPool();
+	refreshPoolSelect(poolPlayers);
+
+	poolAddButton.addEventListener("click", () => {
+		const players = loadPool();
+		const selectedIndex = parseInt(poolSelect.value, 10);
+		if (Number.isNaN(selectedIndex)) {
+			errorBox.textContent = "Select a player from the pool first.";
+			return;
+		}
+		const player = players[selectedIndex];
+		if (!player) {
+			errorBox.textContent = "Selected player not found in pool.";
+			return;
+		}
+		if (!addPlayerToRoster(player)) {
+			errorBox.textContent = "Roster is full. Clear a slot to add more.";
+			return;
+		}
+		errorBox.textContent = "";
+	});
+
+	document.querySelectorAll(".teamgen-row").forEach((row) => {
+		setAutofill(row, row.querySelector(".autofill").checked);
+		row.querySelectorAll(".teamgen-role-button").forEach((button) => {
+			button.addEventListener("click", () => {
+				handleRoleClick(row, button.dataset.role);
+			});
+		});
+		row.querySelector(".autofill").addEventListener("change", () => {
+			setAutofill(row, row.querySelector(".autofill").checked);
+			saveRoster();
+		});
+		row.querySelector(".teamgen-row-add").addEventListener("click", () => {
+			const player = {
+				name: row.querySelector(".name").value.trim(),
+				skill: parseInt(row.querySelector(".rank").value, 10),
+				preferred: row.querySelector(".preferred").value,
+				offrole: row.querySelector(".offrole").value,
+				allowAutofill: row.querySelector(".autofill").checked,
+			};
+			if (!player.name) {
+				errorBox.textContent = "Add a name before adding to pool.";
+				return;
+			}
+			addPlayerToPool(player);
+			errorBox.textContent = "";
+		});
+		row.querySelector(".teamgen-row-remove").addEventListener("click", () => {
+			clearRow(row);
+			saveRoster();
+		});
+	});
+</script>
+	</body>
+</html>

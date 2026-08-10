@@ -1,0 +1,176 @@
+---
+/**
+ * The scene behind every page.
+ *
+ * Two variants:
+ *   "video" — the home page. Looping footage, graded and grained.
+ *   "still" — every other page. The poster frame only, dimmed harder so long
+ *             text stays comfortable to read and no video decodes at all.
+ *
+ * The whole thing is decorative, so it is hidden from assistive tech and
+ * never focusable.
+ */
+interface Props {
+  variant?: "video" | "still";
+}
+
+const { variant = "still" } = Astro.props;
+const isVideo = variant === "video";
+---
+
+<div class="backdrop" data-variant={variant} aria-hidden="true">
+  {
+    isVideo ? (
+      <video
+        id="scene"
+        class="layer"
+        src="/scene.mp4"
+        poster="/scene-poster.jpg"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="metadata"
+        tabindex="-1"
+        disablepictureinpicture
+      />
+    ) : (
+      <img class="layer" src="/scene-poster.jpg" alt="" decoding="async" />
+    )
+  }
+
+  <div class="tint"></div>
+  <div class="grain"></div>
+  <div class="scrim"></div>
+</div>
+
+{
+  isVideo && (
+    <script>
+      /**
+       * Three things CSS can't express on a <video>:
+       *   1. reduced-motion should freeze it on the poster frame
+       *   2. a backgrounded tab shouldn't keep decoding
+       *   3. iOS Low Power Mode rejects autoplay, which rejects a promise
+       */
+      const scene = document.getElementById("scene") as HTMLVideoElement | null;
+
+      if (scene) {
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+        const sync = () => {
+          if (reduced.matches) {
+            scene.pause();
+          } else if (!document.hidden) {
+            // Autoplay can be refused (Low Power Mode); the poster then stands in.
+            scene.play().catch(() => {});
+          }
+        };
+
+        reduced.addEventListener("change", sync);
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) scene.pause();
+          else sync();
+        });
+
+        sync();
+      }
+    </script>
+  )
+}
+
+<style>
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    /* Contain the blend modes so they composite against the scene, not the page. */
+    isolation: isolate;
+    background: var(--ink);
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: var(--scene-filter);
+    /* Slight overscale hides the blur bleeding in at the edges. */
+    transform: scale(1.02);
+  }
+
+  .tint {
+    position: absolute;
+    inset: 0;
+    background: var(--scene-tint);
+    opacity: var(--scene-tint-opacity);
+    mix-blend-mode: var(--scene-tint-blend);
+  }
+
+  /* Grain is what stops the upscaled footage reading as low resolution.
+     It is also the most expensive layer here — turn this down first if a
+     device struggles. */
+  .grain {
+    position: absolute;
+    inset: -60%;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+    animation: grain 1.3s steps(1) infinite;
+    will-change: transform;
+  }
+
+  @keyframes grain {
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-1.5%, -1%);
+    }
+    50% {
+      transform: translate(1%, -1.5%);
+    }
+    75% {
+      transform: translate(-1%, 1%);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  /* Legibility. The home page only needs the bottom-left protected; inner
+     pages carry text across the full column, so they get a flatter wash. */
+  .scrim {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-variant="video"] .scrim {
+    background:
+      linear-gradient(
+        to top,
+        rgba(6, 6, 12, 0.85) 0%,
+        rgba(6, 6, 12, 0.45) 24%,
+        transparent 54%
+      ),
+      linear-gradient(to right, rgba(6, 6, 12, 0.62) 0%, transparent 46%);
+  }
+
+  [data-variant="still"] .scrim {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(6, 6, 12, 0.82) 0%,
+        rgba(6, 6, 12, 0.9) 38%,
+        rgba(6, 6, 12, 0.94) 100%
+      );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grain {
+      animation: none;
+    }
+  }
+</style>

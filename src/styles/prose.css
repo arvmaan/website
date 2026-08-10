@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Long-form markdown output.
+
+   Scoped under `.prose` and loaded only by the pages that render markdown,
+   so index pages never pay for these rules.
+   ========================================================================== */
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > * + * {
+  margin-top: 1.1em;
+}
+
+.prose h2,
+.prose h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+}
+
+.prose h2 {
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+}
+
+.prose h3 {
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+  color: var(--dim);
+}
+
+.prose p,
+.prose li {
+  color: var(--dim);
+}
+
+.prose strong {
+  color: var(--bone);
+  font-weight: 600;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+}
+
+.prose li + li {
+  margin-top: 0.45em;
+}
+
+.prose a {
+  color: var(--ember);
+}
+
+.prose blockquote {
+  margin: 1.6em 0;
+  padding: 0.2em 0 0.2em 1.2em;
+  border-left: 2px solid var(--rule-strong);
+  color: var(--faint);
+  font-style: italic;
+}
+
+.prose blockquote p {
+  color: inherit;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: var(--ember);
+}
+
+/* Fenced blocks: Astro applies a Shiki theme inline, so only the box is ours.
+   `overflow-x` lives here so long lines scroll inside the block and never
+   push the page sideways. */
+.prose pre {
+  margin: 1.6em 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  background: rgba(6, 6, 12, 0.75) !important;
+}
+
+.prose pre code {
+  color: inherit;
+  font-size: inherit;
+}
+
+.prose hr {
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.prose img {
+  border-radius: 2px;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.7rem 1rem 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.prose th {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 500;
+}

@@ -1,0 +1,109 @@
+---
+import { NAV } from "../consts";
+
+/**
+ * The one navigation component.
+ *
+ * "hero"   — sits under the name on the home page.
+ * "header" — pinned to the top of every inner page, with the name as a home link.
+ */
+interface Props {
+  variant?: "hero" | "header";
+}
+
+const { variant = "header" } = Astro.props;
+
+/** Trailing slashes are normalised so `/projects` and `/projects/` both match. */
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isCurrent = (href: string) =>
+  !href.startsWith("http") && path === href.replace(/\/+$/, "");
+---
+
+<nav class="nav" data-variant={variant} aria-label="Main">
+  <ul>
+    {
+      NAV.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            aria-current={isCurrent(item.href) ? "page" : undefined}
+            {...("external" in item && item.external
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+          >
+            {item.label}
+            {"external" in item && item.external && (
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.4rem, 3vw, 2.6rem);
+  }
+
+  .nav a {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    text-shadow: 0 1px 14px rgba(6, 6, 12, 0.9);
+    transition: color 0.25s ease;
+  }
+
+  /* Underline wipes in from the left rather than fading — reads as deliberate. */
+  .nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  .nav a:hover,
+  .nav a:focus-visible {
+    color: var(--ember);
+  }
+
+  .nav a:hover::after,
+  .nav a:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* The current page keeps its underline permanently. */
+  .nav a[aria-current="page"] {
+    color: var(--ember);
+  }
+
+  .nav a[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  .nav[data-variant="hero"] {
+    margin-top: clamp(1.6rem, 4vh, 2.6rem);
+  }
+
+  .nav[data-variant="header"] a {
+    font-size: 0.72rem;
+  }
+</style>

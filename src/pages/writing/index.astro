@@ -1,0 +1,131 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHeader from "../../components/PageHeader.astro";
+
+const posts = (await getCollection("writing", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+
+const dateFormat = new Intl.DateTimeFormat("en-CA", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+<Base title="Writing" description="Notes on Rust, tooling, and coding agents.">
+  <div class="wrap">
+    <PageHeader eyebrow="Writing" title="Notes" />
+
+    {
+      posts.length === 0 ? (
+        <p class="empty">
+          Nothing published yet. There's a template waiting in
+          <code>src/content/writing/</code>.
+        </p>
+      ) : (
+        <ul class="list">
+          {posts.map((post) => (
+            <li>
+              <a class="row" href={`/writing/${post.id}/`}>
+                <span class="row__main">
+                  <span class="row__title">{post.data.title}</span>
+                  <span class="row__desc">{post.data.description}</span>
+                </span>
+                <time datetime={post.data.published.toISOString()}>
+                  {dateFormat.format(post.data.published)}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .wrap {
+    padding: clamp(2.5rem, 7vh, 5rem) var(--gutter) 6rem;
+    max-width: 58rem;
+  }
+
+  .empty {
+    color: var(--faint);
+    font-size: 0.95rem;
+  }
+
+  .empty code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--dim);
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.4rem clamp(1.5rem, 4vw, 3rem);
+    align-items: baseline;
+    padding: clamp(1.1rem, 2.5vh, 1.5rem) 0;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      padding-left 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .row:hover,
+  .row:focus-visible {
+    background-color: rgba(255, 138, 60, 0.06);
+    padding-left: 0.75rem;
+  }
+
+  .row__main {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .row__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    letter-spacing: -0.01em;
+  }
+
+  .row:hover .row__title {
+    color: var(--ember);
+  }
+
+  .row__desc {
+    color: var(--dim);
+    font-size: 0.92rem;
+    max-width: 54ch;
+  }
+
+  time {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 38rem) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,180 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import "../../styles/prose.css";
+
+// getStaticPaths hands its `props` to the page at build time, but Astro can't
+// infer that type across the boundary — declaring Props restores it.
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+
+// One page per non-draft project. Because this filter matches the index's,
+// there can never be a card that links to a 404.
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+  return projects.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+};
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const STATUS_LABEL = {
+  active: "In progress",
+  shipped: "Shipped",
+  paused: "Paused",
+} as const;
+---
+
+<Base title={entry.data.title} description={entry.data.summary}>
+  <article class="wrap">
+    <a class="back" href="/projects/">&larr; Projects</a>
+
+    <header class="head">
+      <h1>{entry.data.title}</h1>
+      <p class="summary">{entry.data.summary}</p>
+
+      <dl class="meta">
+        <div>
+          <dt>Year</dt>
+          <dd>{entry.data.year}</dd>
+        </div>
+        {
+          entry.data.stack.length > 0 && (
+            <div>
+              <dt>Stack</dt>
+              <dd>{entry.data.stack.join(" · ")}</dd>
+            </div>
+          )
+        }
+        <div>
+          <dt>Status</dt>
+          <dd data-status={entry.data.status}>
+            {STATUS_LABEL[entry.data.status]}
+          </dd>
+        </div>
+      </dl>
+
+      {
+        (entry.data.repo || entry.data.demo) && (
+          <p class="links">
+            {entry.data.demo && (
+              <a href={entry.data.demo} target="_blank" rel="noopener noreferrer">
+                Live demo
+              </a>
+            )}
+            {entry.data.repo && (
+              <a href={entry.data.repo} target="_blank" rel="noopener noreferrer">
+                Source
+              </a>
+            )}
+          </p>
+        )
+      }
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .wrap {
+    padding: clamp(2rem, 5vh, 3.5rem) var(--gutter) 6rem;
+    max-width: 52rem;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: clamp(2rem, 5vh, 3rem);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--ember);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.02em;
+  }
+
+  .summary {
+    margin: 1rem 0 0;
+    max-width: 50ch;
+    font-size: clamp(1.02rem, 1.5vw, 1.15rem);
+    color: var(--dim);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem 2.4rem;
+    margin: 2rem 0 0;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .meta div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .meta dd {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--bone);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meta dd[data-status="active"] {
+    color: var(--ember);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    margin: 1.4rem 0 0;
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease;
+  }
+
+  .links a:hover,
+  .links a:focus-visible {
+    border-bottom-color: var(--ember);
+  }
+
+  .prose {
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+  }
+</style>

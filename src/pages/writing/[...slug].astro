@@ -1,0 +1,107 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import "../../styles/prose.css";
+
+// getStaticPaths hands its `props` to the page at build time, but Astro can't
+// infer that type across the boundary — declaring Props restores it.
+interface Props {
+  entry: CollectionEntry<"writing">;
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection("writing", ({ data }) => !data.draft);
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+};
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const dateFormat = new Intl.DateTimeFormat("en-CA", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Base title={entry.data.title} description={entry.data.description}>
+  <article class="wrap">
+    <a class="back" href="/writing/">&larr; Writing</a>
+
+    <header class="head">
+      <h1>{entry.data.title}</h1>
+      <p class="dateline">
+        <time datetime={entry.data.published.toISOString()}>
+          {dateFormat.format(entry.data.published)}
+        </time>
+        {
+          entry.data.updated && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <span>updated {dateFormat.format(entry.data.updated)}</span>
+            </>
+          )
+        }
+        {
+          entry.data.tags.length > 0 && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <span>{entry.data.tags.join(", ")}</span>
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .wrap {
+    padding: clamp(2rem, 5vh, 3.5rem) var(--gutter) 6rem;
+    max-width: 48rem;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: clamp(2rem, 5vh, 3rem);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--ember);
+  }
+
+  h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    letter-spacing: -0.02em;
+  }
+
+  .dateline {
+    margin: 1rem 0 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .prose {
+    margin-top: clamp(2rem, 5vh, 3rem);
+  }
+</style>

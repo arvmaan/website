@@ -1,0 +1,245 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { ARCHIVE } from "../../data/archive";
+
+// Drafts never reach the index — and `[...slug].astro` filters identically, so
+// the two can't disagree about what exists.
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const archive = [...ARCHIVE].sort((a, b) => b.year - a.year);
+---
+
+<Base
+  title="Projects"
+  description="Rust tooling for coding agents, plus older work."
+>
+  <div class="wrap">
+    <PageHeader eyebrow="Projects" title="Things I've built" />
+
+    <ul class="list">
+      {
+        projects.map((p) => (
+          <li>
+            <a class="row" href={`/projects/${p.id}/`}>
+              <span class="row__title">{p.data.title}</span>
+              <span class="row__summary">{p.data.summary}</span>
+              <span class="row__meta">
+                <span class="stack">{p.data.stack.join(" · ")}</span>
+                <span class="year">{p.data.year}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="archive">
+      <h2>Archive</h2>
+      <p class="archive__note">
+        Older projects, kept findable. These link straight to the source.
+      </p>
+      <ul class="archive__list">
+        {
+          archive.map((a) => (
+            <li>
+              <a href={a.repo} target="_blank" rel="noopener noreferrer">
+                <span class="archive__name">{a.name}</span>
+                <span class="archive__blurb">{a.blurb}</span>
+                <span class="archive__year">{a.year}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  /* Full gutter-to-gutter rather than a narrow column: with only a handful of
+     projects, a capped measure leaves most of a wide screen empty and the page
+     reads as unfinished. The row grid below spends that width on content.
+     `min-height` keeps a short list from floating in the middle of nowhere. */
+  .wrap {
+    padding: clamp(2.5rem, 7vh, 5rem) var(--gutter) 6rem;
+    min-height: 100svh;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Title | summary | meta. Three tracks means a wide viewport is filled by
+     content instead of one long gap between the name and the year. */
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
+    gap: 0.5rem clamp(1.5rem, 4vw, 3.5rem);
+    align-items: baseline;
+    padding: clamp(1.3rem, 3vh, 1.9rem) 0;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      padding-left 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .row:hover,
+  .row:focus-visible {
+    background-color: rgba(255, 138, 60, 0.06);
+    padding-left: 0.75rem;
+  }
+
+  .row__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    letter-spacing: -0.01em;
+  }
+
+  .row:hover .row__title {
+    color: var(--ember);
+  }
+
+  /* No measure cap here — the grid column already bounds the line. Capping it
+     as well forced a wrap while the column still had room to spare. */
+  .row__summary {
+    color: var(--dim);
+    font-size: 0.94rem;
+  }
+
+  .row__meta {
+    display: grid;
+    justify-items: end;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+
+  .year {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- archive --- */
+
+  .archive {
+    margin-top: clamp(3.5rem, 9vh, 6rem);
+  }
+
+  .archive h2 {
+    font-size: 1.25rem;
+  }
+
+  .archive__note {
+    margin: 0.6rem 0 1.6rem;
+    color: var(--faint);
+    font-size: 0.9rem;
+  }
+
+  .archive__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .archive__list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .archive__list a {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
+    gap: 0.2rem 1.5rem;
+    align-items: baseline;
+    padding: 0.8rem 0;
+    color: var(--dim);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition:
+      padding-left 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .archive__list a:hover,
+  .archive__list a:focus-visible {
+    color: var(--bone);
+    padding-left: 0.75rem;
+  }
+
+  .archive__name {
+    color: var(--bone);
+  }
+
+  .archive__blurb {
+    color: var(--faint);
+  }
+
+  .archive__year {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Mid widths: title and meta share the top line, summary drops beneath and
+     spans both — keeps the summary readable instead of squeezing it. */
+  @media (max-width: 68rem) {
+    .row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      row-gap: 0.35rem;
+    }
+
+    .row__title {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .row__meta {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .row__summary {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      max-width: 60ch;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+
+    .row__meta {
+      grid-column: 1;
+      grid-row: 3;
+      justify-items: start;
+      grid-auto-flow: column;
+      gap: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    .archive__list a {
+      grid-template-columns: 1fr auto;
+    }
+
+    .archive__blurb {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

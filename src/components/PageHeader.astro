@@ -1,0 +1,38 @@
+---
+/** Shared title block for inner pages, so every section opens the same way. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+}
+
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<header class="page-header">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h1>{title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+</header>
+
+<style>
+  .page-header {
+    margin-bottom: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.02em;
+  }
+
+  .lede {
+    margin: 1.1rem 0 0;
+    max-width: 56ch;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
+    color: var(--dim);
+  }
+</style>
