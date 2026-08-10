@@ -1,4 +1,4 @@
-ArvindMaan.dev
+arv.tw
 ---
 For my website, since this is one my earliest attempt at web development, you can see my previous drafts that it took to get where I am. (Descending order, newest first)
 
