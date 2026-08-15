@@ -32,6 +32,542 @@
 		);
 		background-attachment: fixed;
 	}
+
+	/* ==========================================================================
+	   Customs Manager — component styles.
+	   Self-contained on purpose: this page ships outside the Astro build, so it
+	   can't reach src/styles/global.css. Tokens are local, but color values are
+	   sampled from the main site's palette (--bone/--dim/--faint/--ember) so it
+	   still feels like the same place.
+	   ========================================================================== */
+
+	* {
+		box-sizing: border-box;
+	}
+
+	body {
+		margin: 0;
+		color: #f2ebdd;
+		font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+	}
+
+	.teamgen-page {
+		max-width: 74rem;
+		margin: 0 auto;
+		padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2.5rem) 5rem;
+	}
+
+	/* --- hero --- */
+
+	.teamgen-hero {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid rgba(242, 235, 221, 0.14);
+	}
+
+	.teamgen-title {
+		margin: 0;
+		font-family: "Oxanium", "Space Grotesk", sans-serif;
+		font-weight: 600;
+		font-size: clamp(1.8rem, 4vw, 2.6rem);
+		letter-spacing: -0.01em;
+		color: #f2ebdd;
+	}
+
+	.teamgen-subtitle {
+		margin: 0.4rem 0 0;
+		color: #c3b7a8;
+		font-size: 0.95rem;
+	}
+
+	.teamgen-hero-search {
+		font-family: "Oxanium", sans-serif;
+		font-size: 0.7rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: #8c8074;
+		padding: 0.5rem 0.9rem;
+		border: 1px solid rgba(242, 235, 221, 0.16);
+		border-radius: 999px;
+	}
+
+	/* --- panel + quickbars --- */
+
+	.teamgen-panel {
+		background: rgba(20, 20, 30, 0.42);
+		border: 1px solid rgba(242, 235, 221, 0.12);
+		border-radius: 16px;
+		padding: clamp(1.1rem, 3vw, 1.8rem);
+		backdrop-filter: blur(10px);
+	}
+
+	.teamgen-quickbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 1.5rem;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid rgba(242, 235, 221, 0.1);
+	}
+
+	.teamgen-quickbar-title {
+		font-family: "Oxanium", sans-serif;
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: #8c8074;
+	}
+
+	.teamgen-quickbar-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	/* --- inputs + buttons --- */
+
+	.teamgen-input {
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(242, 235, 221, 0.16);
+		border-radius: 8px;
+		color: #f2ebdd;
+		font: inherit;
+		font-size: 0.9rem;
+		padding: 0.5rem 0.7rem;
+	}
+
+	.teamgen-input:focus-visible,
+	select.teamgen-input:focus-visible {
+		outline: 2px solid #ff8a3c;
+		outline-offset: 1px;
+	}
+
+	.teamgen-pool-select {
+		min-width: 14rem;
+	}
+
+	.teamgen-button {
+		font-family: "Oxanium", sans-serif;
+		font-size: 0.78rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #1a1410;
+		background: #ff8a3c;
+		border: none;
+		border-radius: 8px;
+		padding: 0.6rem 1.1rem;
+		cursor: pointer;
+		transition:
+			transform 0.15s ease,
+			background-color 0.15s ease;
+	}
+
+	.teamgen-button:hover {
+		background: #ffa564;
+	}
+
+	.teamgen-button:active {
+		transform: translateY(1px);
+	}
+
+	.teamgen-button.ghost {
+		color: #f2ebdd;
+		background: transparent;
+		border: 1px solid rgba(242, 235, 221, 0.22);
+	}
+
+	.teamgen-button.ghost:hover {
+		background: rgba(242, 235, 221, 0.08);
+		border-color: rgba(242, 235, 221, 0.4);
+	}
+
+	/* --- roster paste/export --- */
+
+	.teamgen-roster {
+		display: block;
+		width: 100%;
+		margin: 0.75rem 0 0.25rem;
+		padding: 0.75rem;
+		min-height: 8rem;
+		resize: vertical;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(242, 235, 221, 0.14);
+		border-radius: 10px;
+		color: #f2ebdd;
+		font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+		font-size: 0.82rem;
+		line-height: 1.5;
+	}
+
+	.teamgen-roster.is-collapsed {
+		display: none;
+	}
+
+	/* --- player table --- */
+
+	.teamgen-table {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 5.5rem auto auto;
+		align-items: center;
+		gap: 0.6rem 1rem;
+		margin-top: 1.5rem;
+	}
+
+	.teamgen-header {
+		font-family: "Oxanium", sans-serif;
+		font-size: 0.62rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: #8c8074;
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid rgba(242, 235, 221, 0.14);
+	}
+
+	.teamgen-row {
+		display: contents;
+	}
+
+	.teamgen-row > .teamgen-input,
+	.teamgen-row > .teamgen-role-selector,
+	.teamgen-row > .teamgen-row-actions {
+		padding: 0.5rem 0;
+		border-bottom: 1px solid rgba(242, 235, 221, 0.07);
+	}
+
+	.teamgen-row .rank {
+		width: 100%;
+		text-align: center;
+	}
+
+	.teamgen-role-selector {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	.teamgen-role-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.1rem;
+		height: 2.1rem;
+		padding: 0.3rem;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(242, 235, 221, 0.14);
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			border-color 0.15s ease,
+			background-color 0.15s ease;
+	}
+
+	.teamgen-role-button img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		opacity: 0.55;
+		filter: grayscale(0.3);
+	}
+
+	.teamgen-role-button:hover {
+		border-color: rgba(242, 235, 221, 0.35);
+	}
+
+	.teamgen-role-button.is-preferred {
+		background: rgba(255, 138, 60, 0.18);
+		border-color: #ff8a3c;
+	}
+
+	.teamgen-role-button.is-preferred img {
+		opacity: 1;
+		filter: none;
+	}
+
+	.teamgen-role-button.is-offrole {
+		background: rgba(91, 140, 255, 0.16);
+		border-color: #5b8cff;
+	}
+
+	.teamgen-role-button.is-offrole img {
+		opacity: 1;
+		filter: none;
+	}
+
+	.teamgen-fill-toggle {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.1rem;
+		height: 2.1rem;
+		margin-left: 0.15rem;
+		border-radius: 8px;
+		border: 1px dashed rgba(242, 235, 221, 0.22);
+		cursor: pointer;
+	}
+
+	.teamgen-fill-toggle img {
+		width: 60%;
+		height: 60%;
+		object-fit: contain;
+		opacity: 0.5;
+	}
+
+	.teamgen-fill-toggle:has(.autofill:checked) {
+		border-style: solid;
+		border-color: #c8aa6e;
+		background: rgba(200, 170, 110, 0.12);
+	}
+
+	.teamgen-fill-toggle:has(.autofill:checked) img {
+		opacity: 1;
+	}
+
+	.teamgen-fill-toggle.is-off {
+		opacity: 0.5;
+	}
+
+	.teamgen-fill-toggle .autofill {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+	}
+
+	.teamgen-row-actions {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.teamgen-row-button {
+		width: 1.9rem;
+		height: 1.9rem;
+		line-height: 1;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(242, 235, 221, 0.14);
+		border-radius: 6px;
+		color: #c3b7a8;
+		cursor: pointer;
+		font-size: 1rem;
+	}
+
+	.teamgen-row-button:hover {
+		color: #f2ebdd;
+		border-color: rgba(242, 235, 221, 0.35);
+	}
+
+	.teamgen-row-add:hover {
+		border-color: #c8aa6e;
+		color: #c8aa6e;
+	}
+
+	.teamgen-row-remove:hover {
+		border-color: #ff5b6b;
+		color: #ff5b6b;
+	}
+
+	/* --- generate bar --- */
+
+	.teamgen-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+		margin-top: 1.75rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgba(242, 235, 221, 0.12);
+	}
+
+	.teamgen-toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.85rem;
+		color: #c3b7a8;
+		cursor: pointer;
+	}
+
+	.teamgen-toggle input {
+		accent-color: #ff8a3c;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.teamgen-error {
+		flex-basis: 100%;
+		color: #ff5b6b;
+		font-size: 0.85rem;
+		min-height: 1.2em;
+	}
+
+	/* --- output --- */
+
+	.teamgen-output {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		gap: 1.25rem;
+		margin-top: 2rem;
+	}
+
+	.teamgen-output-card {
+		background: rgba(91, 140, 255, 0.08);
+		border: 1px solid rgba(91, 140, 255, 0.3);
+		border-radius: 14px;
+		padding: 1.25rem 1.4rem;
+	}
+
+	.teamgen-output-card h2 {
+		margin: 0;
+		font-family: "Oxanium", sans-serif;
+		font-size: 1.1rem;
+		color: #a9c1ff;
+	}
+
+	.teamgen-output-card-red {
+		background: rgba(255, 91, 107, 0.08);
+		border-color: rgba(255, 91, 107, 0.3);
+	}
+
+	.teamgen-output-card-red h2 {
+		color: #ffaab2;
+	}
+
+	.teamgen-output-meta {
+		margin: 0.35rem 0 1rem;
+		font-size: 0.8rem;
+		color: #8c8074;
+	}
+
+	.teamgen-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.teamgen-list-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.5rem 0.65rem;
+		background: rgba(255, 255, 255, 0.04);
+		border-radius: 8px;
+	}
+
+	.teamgen-player-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+	}
+
+	.teamgen-player {
+		font-size: 0.92rem;
+		color: #f2ebdd;
+	}
+
+	.teamgen-rank {
+		font-size: 0.68rem;
+		color: #8c8074;
+	}
+
+	.teamgen-role {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.7rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #c3b7a8;
+		padding: 0.25rem 0.55rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.06);
+	}
+
+	.teamgen-role img {
+		width: 1rem;
+		height: 1rem;
+		object-fit: contain;
+	}
+
+	.teamgen-role-primary {
+		background: rgba(255, 138, 60, 0.18);
+		color: #ffb98a;
+	}
+
+	.teamgen-role-secondary {
+		background: rgba(91, 140, 255, 0.16);
+		color: #a9c1ff;
+	}
+
+	.teamgen-role-autofill {
+		background: rgba(200, 170, 110, 0.14);
+		color: #dcc48f;
+	}
+
+	/* --- narrow viewports: table becomes stacked cards --- */
+
+	@media (max-width: 44rem) {
+		.teamgen-table {
+			grid-template-columns: 1fr;
+		}
+
+		/* Named areas rather than auto-placement: DOM order is name, rank,
+		   roles, actions, but the mobile layout needs actions beside rank —
+		   out of source order — and auto-placement can't do that without
+		   colliding with the full-width name row. */
+		.teamgen-row {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			grid-template-areas:
+				"name name"
+				"rank actions"
+				"roles roles";
+			gap: 0.5rem 0.75rem;
+			padding: 0.75rem 0;
+			border-bottom: 1px solid rgba(242, 235, 221, 0.1);
+		}
+
+		.teamgen-row > .name {
+			grid-area: name;
+		}
+
+		.teamgen-row > .rank {
+			grid-area: rank;
+			width: auto;
+			justify-self: start;
+		}
+
+		.teamgen-row > .teamgen-role-selector {
+			grid-area: roles;
+			border-bottom: none;
+			padding-top: 0;
+		}
+
+		.teamgen-row > .teamgen-row-actions {
+			grid-area: actions;
+			justify-self: end;
+			align-self: center;
+			border-bottom: none;
+		}
+
+		/* The header strip is 4 separate grid children of .teamgen-table, not
+		   part of a .teamgen-row — at one column they'd stack as four bare
+		   labels above the list. The placeholders inside each row already
+		   carry that context, so drop the header entirely instead. */
+		.teamgen-header {
+			display: none;
+		}
+	}
 </style>
 
 <div class="teamgen-page">
