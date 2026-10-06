@@ -59,6 +59,22 @@ for (const e of [...all].sort((a, b) => (a.data.seriesNumber ?? a.data.season ??
 }
 const spineSet = (e: Entry) => sets.get(setKey(e))!;
 
+/** One gilt ornament per design, stamped at the head of the spine. */
+const ORNAMENTS = ["✦", "❖", "❦", "✧"];
+
+function roman(n: number): string {
+  const table: [number, string][] = [[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  let out = "";
+  for (const [v, sym] of table) while (n >= v) { out += sym; n -= v; }
+  return out;
+}
+
+/** Volume or season as a numeral; half-volumes (novellas like 2.5) go unnumbered. */
+function numeral({ data: d }: Entry) {
+  const n = d.type === "tv" ? d.season : d.seriesNumber;
+  return n != null && Number.isInteger(n) && n > 0 && n < 40 ? roman(n) : undefined;
+}
+
 const finished = all.filter((e) => e.data.status === "finished" || e.data.status === "abandoned");
 const nightstand = all.filter((e) => e.data.status === "in-progress");
 const queued = all
@@ -201,6 +217,18 @@ const spineLabel = (e: Entry) =>
     </dl>
 
     <div class="controls">
+      <details class="sort">
+        <summary aria-label="Sort the shelf">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+            <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" />
+          </svg>
+          <span class="sort__current">By series</span>
+        </summary>
+        <div class="sort__menu" role="group" aria-label="Sort by">
+          <button type="button" data-sort="series" aria-pressed="true">By series</button>
+          <button type="button" data-sort="recent" aria-pressed="false">Recent first</button>
+        </div>
+      </details>
       <p class="legend">
         <span class="legend__key legend__key--w" aria-hidden="true"></span> Thicker — longer
         <span class="legend__key legend__key--fav" aria-hidden="true"></span> Bookmark or gold sticker — five stars
@@ -219,21 +247,33 @@ const spineLabel = (e: Entry) =>
           sec.items.map((e) => {
             const set = spineSet(e);
             const w = spineWidth(e);
+            const film = e.data.type === "film";
+            const num = numeral(e);
             return (
-              <li data-type={e.data.type} style={`--w:${w}px;--h:${set.height};--c:${set.color}`}>
+              <li
+                data-type={e.data.type}
+                data-finished={e.data.finished?.valueOf()}
+                style={`--w:${w}px;--h:${set.height};--c:${set.color}`}
+              >
                 <button
                   type="button"
-                  class:list={["spine", { "is-dnf": e.data.status === "abandoned", "is-thin": w < 18 }]}
+                  class:list={["spine", { leather: !film, "is-dnf": e.data.status === "abandoned", "is-thin": w < 18 }]}
                   data-id={e.id}
                   data-type={e.data.type}
                   data-design={e.data.type === "film" ? undefined : set.design}
                   aria-label={spineLabel(e)}
                 >
                   {e.data.rating === 5 && <span class="bookmark" aria-hidden="true" />}
-                  <span class="spine__title">{e.data.title}</span>
-                  {e.data.type === "tv" && e.data.season && <span class="spine__mark">S{e.data.season}</span>}
-                  {e.data.type === "book" && e.data.seriesNumber != null && Number.isInteger(e.data.seriesNumber) && (
-                    <span class="spine__mark">{e.data.seriesNumber}</span>
+                  {film ? (
+                    <span class="spine__title">{e.data.title}</span>
+                  ) : (
+                    <>
+                      <span class="spine__orn" aria-hidden="true">{ORNAMENTS[set.design]}</span>
+                      <span class="spine__label">
+                        <span class="spine__title">{e.data.title}</span>
+                      </span>
+                      {num && <span class="spine__num">{num}</span>}
+                    </>
                   )}
                 </button>
               </li>
@@ -353,6 +393,43 @@ const spineLabel = (e: Entry) =>
   };
   const ratingText = (r: number) => `${stars(r)}  ${r}`;
 
+  // --- sort ----------------------------------------------------------------
+  // The server renders series order; "recent" re-sorts each shelf in place by
+  // finish date. The stack lying flat always stays at the end of its shelf.
+  const sortMenu = document.querySelector<HTMLDetailsElement>(".sort")!;
+  const rows = [...shelf.querySelectorAll<HTMLOListElement>(".row")];
+  const seriesOrder = new Map(rows.map((r) => [r, [...r.children] as HTMLElement[]]));
+
+  function sortBy(mode: string) {
+    for (const row of rows) {
+      const original = seriesOrder.get(row)!;
+      const items = original.filter((li) => !li.classList.contains("stack"));
+      if (mode === "recent")
+        items.sort((a, b) => Number(b.dataset.finished ?? 0) - Number(a.dataset.finished ?? 0));
+      row.append(...items, ...original.filter((li) => li.classList.contains("stack")));
+    }
+    sortMenu.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((b) => {
+      b.setAttribute("aria-pressed", String(b.dataset.sort === mode));
+      if (b.dataset.sort === mode) sortMenu.querySelector(".sort__current")!.textContent = b.textContent;
+    });
+    try {
+      localStorage.setItem("shelf-sort", mode);
+    } catch {}
+  }
+
+  sortMenu.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((b) =>
+    b.addEventListener("click", () => {
+      sortBy(b.dataset.sort!);
+      sortMenu.open = false;
+    }),
+  );
+  document.addEventListener("click", (ev) => {
+    if (sortMenu.open && !sortMenu.contains(ev.target as Node)) sortMenu.open = false;
+  });
+  try {
+    if (localStorage.getItem("shelf-sort") === "recent") sortBy("recent");
+  } catch {}
+
   // --- hover tip -----------------------------------------------------------
   function showTip(el: HTMLElement) {
     const d = data[el.dataset.id!];
@@ -453,7 +530,7 @@ const spineLabel = (e: Entry) =>
   .wrap {
     padding: clamp(2.5rem, 7vh, 5rem) var(--gutter) 6rem;
     min-height: 100svh;
-    --row: clamp(10rem, 17vw, 12.5rem);
+    --row: clamp(11rem, 18vw, 14rem);
     --headroom: 26px;
   }
 
@@ -496,7 +573,76 @@ const spineLabel = (e: Entry) =>
     font-variant-numeric: tabular-nums;
   }
 
-  /* --- filters + legend --------------------------------------------------- */
+  /* --- sort control ------------------------------------------------------ */
+
+  .sort {
+    position: relative;
+    order: 2;
+  }
+
+  .sort summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sort summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sort summary:hover,
+  .sort[open] summary {
+    color: var(--bone);
+    border-color: var(--bone);
+  }
+
+  .sort__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.4rem);
+    z-index: 20;
+    display: grid;
+    min-width: 10rem;
+    padding: 0.3rem;
+    background: var(--ink-soft);
+    border: 1px solid var(--rule-strong);
+    border-radius: 8px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  }
+
+  .sort__menu button {
+    font: inherit;
+    font-size: 0.82rem;
+    text-align: left;
+    color: var(--dim);
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    padding: 0.45rem 0.65rem;
+    cursor: pointer;
+  }
+
+  .sort__menu button:hover {
+    color: var(--bone);
+    background: rgba(242, 235, 221, 0.06);
+  }
+
+  .sort__menu button[aria-pressed="true"] {
+    color: var(--ember);
+  }
+
+  /* --- legend ------------------------------------------------------------ */
 
   .controls {
     display: flex;
@@ -612,7 +758,6 @@ const spineLabel = (e: Entry) =>
     /* Covers range from near-white to near-black; clamp the lightness so every
        spine sits in one tonal band and the title stays readable on all of them. */
     --base: color-mix(in oklab, var(--c) 68%, #06060c);
-    --rule: rgba(242, 235, 221, 0.24);
     position: relative;
     width: var(--w);
     height: calc((var(--row) - var(--plank) - var(--headroom)) * var(--h));
@@ -622,14 +767,7 @@ const spineLabel = (e: Entry) =>
     color: var(--bone);
     cursor: pointer;
     background:
-      linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0.5),
-        transparent 16%,
-        rgba(255, 255, 255, 0.1) 42%,
-        transparent 64%,
-        rgba(0, 0, 0, 0.4)
-      ),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent 16%, rgba(255, 255, 255, 0.1) 42%, transparent 64%, rgba(0, 0, 0, 0.4)),
       var(--base);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -646,7 +784,6 @@ const spineLabel = (e: Entry) =>
     }
   }
 
-  /* Four spine designs. A series always shares one, so a set reads as a set. */
   .spine::before,
   .spine::after {
     content: "";
@@ -656,67 +793,204 @@ const spineLabel = (e: Entry) =>
     pointer-events: none;
   }
 
-  /* 0 — classic: double rules at head and tail. */
-  .spine[data-design="0"]::before,
-  .spine[data-design="0"]::after {
-    height: 4px;
-    border-block: 1px solid var(--rule);
-  }
-  .spine[data-design="0"]::before { top: 7px; }
-  .spine[data-design="0"]::after { bottom: 7px; }
+  /* --- leather bindings --------------------------------------------------
+     Books (and box sets) are bound in leather: the cover's colour dyed dark,
+     a rounded spine catching light at the crown, grain over everything, and
+     gilt tooling. ::before carries the grain and wear; ::after the raised
+     bands and gilt fillets, which differ by design. A series always shares
+     one design, so a set reads as a set. */
 
-  /* 1 — publisher block: a dark band across the head, uppercase sans title. */
-  .spine[data-design="1"]::before {
-    top: 0;
-    height: 16%;
-    background: rgba(6, 6, 12, 0.42);
-    border-bottom: 1px solid var(--rule);
+  .spine.leather {
+    --leather: color-mix(in oklab, var(--c) 45%, #140c07);
+    --gilt: #d6b06a;
+    --gilt-hi: #f4dc9f;
+    --band: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.6) 0,
+      rgba(255, 236, 205, 0.26) 1px,
+      rgba(255, 236, 205, 0.08) 3px,
+      rgba(0, 0, 0, 0.6) 6px
+    );
+    --fillet: linear-gradient(var(--gilt), var(--gilt));
+    /* Where the ornament, title, and numeral sit; each design moves them. */
+    --orn-y: 24px;
+    --title-top: 36px;
+    --title-bottom: 40px;
+    --num-y: 22px;
+    border-radius: 4px 4px 2px 2px;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.65) 0,
+        rgba(0, 0, 0, 0.18) 11%,
+        rgba(255, 238, 210, 0.17) 36%,
+        rgba(255, 238, 210, 0.05) 52%,
+        rgba(0, 0, 0, 0.22) 78%,
+        rgba(0, 0, 0, 0.7) 100%
+      ),
+      var(--leather);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 236, 205, 0.14),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.45),
+      2px 0 3px rgba(0, 0, 0, 0.45);
   }
-  .spine[data-design="1"]::after {
-    bottom: 6px;
-    border-top: 1px solid var(--rule);
+
+  @supports (color: oklch(from red l c h)) {
+    .spine.leather {
+      --leather: oklch(from var(--c) clamp(0.21, calc(l * 0.68), 0.33) min(c, 0.08) h);
+    }
   }
-  .spine[data-design="1"] .spine__title {
-    top: calc(16% + 8px);
+
+  .spine.leather::before {
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0.7;
+    mix-blend-mode: overlay;
+    background:
+      /* scuffed head and tail */
+      radial-gradient(120% 10px at 50% 0, rgba(0, 0, 0, 0.7), transparent),
+      radial-gradient(120% 10px at 50% 100%, rgba(0, 0, 0, 0.7), transparent),
+      /* pebbled grain */
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85 0.55' numOctaves='3' seed='4'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23g)'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='2' seed='9'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23m)'/></svg>");
+  }
+
+  .spine.leather::after {
+    inset: 0;
+  }
+
+  /* 0 — classic: paired raised bands at head and tail, a gilt fillet outside each pair. */
+  .spine.leather[data-design="0"]::after {
+    background:
+      var(--fillet) 0 4px / 100% 1px no-repeat,
+      var(--band) 0 7px / 100% 6px no-repeat,
+      var(--band) 0 15px / 100% 6px no-repeat,
+      var(--band) 0 calc(100% - 7px) / 100% 6px no-repeat,
+      var(--band) 0 calc(100% - 15px) / 100% 6px no-repeat,
+      var(--fillet) 0 calc(100% - 4px) / 100% 1px no-repeat;
+  }
+  .spine.leather[data-design="0"] {
+    --orn-y: 28px;
+    --title-top: 40px;
+    --title-bottom: 44px;
+    --num-y: 26px;
+  }
+
+  /* 1 — title label: one band each end, title on an inset dark label in a gilt frame. */
+  .spine.leather[data-design="1"]::after {
+    background:
+      var(--band) 0 6px / 100% 6px no-repeat,
+      var(--fillet) 0 14px / 100% 1px no-repeat,
+      var(--fillet) 0 calc(100% - 14px) / 100% 1px no-repeat,
+      var(--band) 0 calc(100% - 6px) / 100% 6px no-repeat;
+  }
+  .spine.leather[data-design="1"] .spine__label {
+    left: 3px;
+    right: 3px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.35), transparent 40%, rgba(0, 0, 0, 0.35)), #1a110c;
+    box-shadow:
+      inset 0 0 0 1px var(--gilt),
+      0 1px 0 rgba(255, 236, 205, 0.1);
+    border-radius: 1px;
+  }
+  .spine.leather[data-design="1"] .spine__num {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    min-width: 15px;
+    padding: 2px 2px 1px;
+    background: #1a110c;
+    border: 1px solid var(--gilt);
+    border-radius: 7px;
+  }
+
+  /* 2 — ornate: no bands, triple gilt fillets (thick-thin-thin) and a
+     double-ruled frame around the title. */
+  .spine.leather[data-design="2"]::after {
+    background:
+      linear-gradient(var(--gilt), var(--gilt)) 0 6px / 100% 2px no-repeat,
+      var(--fillet) 0 10px / 100% 1px no-repeat,
+      var(--fillet) 0 13px / 100% 1px no-repeat,
+      var(--fillet) 0 calc(100% - 13px) / 100% 1px no-repeat,
+      var(--fillet) 0 calc(100% - 10px) / 100% 1px no-repeat,
+      linear-gradient(var(--gilt), var(--gilt)) 0 calc(100% - 6px) / 100% 2px no-repeat;
+  }
+  .spine.leather[data-design="2"] .spine__label {
+    left: 3px;
+    right: 3px;
+    box-shadow:
+      inset 0 0 0 1px var(--gilt),
+      inset 0 0 0 3px transparent,
+      inset 0 0 0 3.5px rgba(214, 176, 106, 0.55);
+  }
+  .spine.leather[data-design="2"] .spine__title {
+    font-style: italic;
+  }
+
+  /* 3 — panelled: four raised bands boxing the head and tail panels, each
+     hugged by a gilt fillet; the ornament sits in the head panel. */
+  .spine.leather[data-design="3"]::after {
+    background:
+      var(--band) 0 5px / 100% 6px no-repeat,
+      var(--fillet) 0 13px / 100% 1px no-repeat,
+      var(--fillet) 0 31px / 100% 1px no-repeat,
+      var(--band) 0 33px / 100% 6px no-repeat,
+      var(--band) 0 calc(100% - 33px) / 100% 6px no-repeat,
+      var(--fillet) 0 calc(100% - 31px) / 100% 1px no-repeat,
+      var(--fillet) 0 calc(100% - 13px) / 100% 1px no-repeat,
+      var(--band) 0 calc(100% - 5px) / 100% 6px no-repeat;
+  }
+  .spine.leather[data-design="3"] {
+    --orn-y: 18px;
+    --title-top: 44px;
+    --title-bottom: 44px;
+    --num-y: 18px;
+  }
+  .spine.leather[data-design="3"] .spine__title {
     font-family: var(--font-body);
-    font-size: min(0.58rem, calc(var(--w) * 0.36));
-    letter-spacing: 0.14em;
+    font-size: min(0.56rem, calc(var(--w) * 0.36));
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  /* 2 — foil: thin gilt rules, italic title. */
-  .spine[data-design="2"] {
-    --rule: rgba(236, 196, 128, 0.6);
-  }
-  .spine[data-design="2"]::before,
-  .spine[data-design="2"]::after {
-    height: 6px;
-    border-block: 1px solid var(--rule);
-  }
-  .spine[data-design="2"]::before { top: 10px; }
-  .spine[data-design="2"]::after { bottom: 10px; }
-  .spine[data-design="2"] .spine__title {
-    font-style: italic;
-    color: #f1dcb4;
+  /* Without a numeral the title can run further down the spine. */
+  .spine.leather:not(:has(.spine__num)) {
+    --title-bottom: 26px;
   }
 
-  /* 3 — title plate: a lighter label panel the title sits on. */
-  .spine[data-design="3"]::before {
-    top: 14%;
-    bottom: 22%;
-    left: 2px;
-    right: 2px;
-    border: 1px solid var(--rule);
-    background: rgba(242, 235, 221, 0.07);
+  .spine__orn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--orn-y);
+    transform: translateY(-50%);
+    z-index: 1;
+    font-size: 0.55rem;
+    line-height: 1;
+    text-align: center;
+    color: var(--gilt);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+
+  .spine__label {
+    position: absolute;
+    top: var(--title-top);
+    bottom: var(--title-bottom);
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
   }
 
   .spine__title {
-    position: absolute;
-    inset: 16px 0 22px;
     writing-mode: vertical-rl;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    max-height: 100%;
+    padding-block: 4px;
     font-family: var(--font-display);
     font-size: min(0.72rem, calc(var(--w) * 0.44));
     line-height: 1;
@@ -724,34 +998,37 @@ const spineLabel = (e: Entry) =>
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   }
 
-  .spine[data-design="3"] .spine__title {
-    top: calc(14% + 6px);
+  /* Gold leaf pressed into the leather: bright face, dark lip above, faint
+     catch-light below. */
+  .leather .spine__title {
+    color: var(--gilt-hi);
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.7),
+      0 1px 0 rgba(255, 220, 150, 0.12);
   }
 
-  .spine.is-thin .spine__title {
-    display: none;
-  }
-
-  .spine__mark {
+  .spine__num {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 12px;
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    color: rgba(242, 235, 221, 0.75);
+    bottom: var(--num-y);
+    transform: translateY(50%);
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: min(0.58rem, calc(var(--w) * 0.34));
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: var(--gilt-hi);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+  }
+
+  .spine.is-thin .spine__label,
+  .spine.is-thin .spine__orn,
+  .spine.is-thin .spine__num {
     display: none;
-  }
-
-  .spine:not(.is-thin) .spine__mark {
-    display: block;
-  }
-
-  .spine:not(.is-thin):has(.spine__mark) .spine__title {
-    bottom: 26px;
   }
 
   /* Five stars: a bookmark ribbon left in, poking out of the top. */
@@ -802,7 +1079,9 @@ const spineLabel = (e: Entry) =>
   }
 
   .spine[data-type="film"] .spine__title {
+    position: absolute;
     inset: 22px 0 10px;
+    padding: 0;
     font-family: var(--font-body);
     font-size: 0.55rem;
     font-weight: 700;
@@ -865,23 +1144,27 @@ const spineLabel = (e: Entry) =>
     margin-left: 14px;
   }
 
+  /* Lying flat, so the leather, grain, and gilt run horizontally. */
   .slab {
-    --base: color-mix(in oklab, var(--c) 68%, #06060c);
+    --leather: color-mix(in oklab, var(--c) 45%, #140c07);
+    --gilt: #d6b06a;
     position: relative;
     display: grid;
     place-items: center;
     width: var(--len);
     height: var(--t);
-    padding: 0 10px;
+    padding: 0 14px;
     border: 0;
-    border-radius: 1px 2px 2px 1px;
-    color: var(--bone);
+    border-radius: 2px 4px 4px 2px;
+    color: #f4dc9f;
     cursor: pointer;
     transform: translateX(var(--x));
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 40%, rgba(0, 0, 0, 0.35)),
-      var(--base);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.45);
+      linear-gradient(var(--gilt), var(--gilt)) 7px 0 / 1px 100% no-repeat,
+      linear-gradient(var(--gilt), var(--gilt)) calc(100% - 7px) 0 / 1px 100% no-repeat,
+      linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(255, 238, 210, 0.15) 34%, rgba(255, 238, 210, 0.04) 55%, rgba(0, 0, 0, 0.65)),
+      var(--leather);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
     transition:
       transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1),
       opacity 0.2s ease;
@@ -889,8 +1172,19 @@ const spineLabel = (e: Entry) =>
 
   @supports (color: oklch(from red l c h)) {
     .slab {
-      --base: oklch(from var(--c) clamp(0.3, l, 0.56) min(c, 0.14) h);
+      --leather: oklch(from var(--c) clamp(0.21, calc(l * 0.68), 0.33) min(c, 0.08) h);
     }
+  }
+
+  .slab::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0.7;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.55 0.85' numOctaves='3' seed='4'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23g)'/></svg>");
   }
 
   .slab:hover,
@@ -899,13 +1193,15 @@ const spineLabel = (e: Entry) =>
   }
 
   .slab__title {
+    position: relative;
     font-family: var(--font-display);
-    font-size: min(0.62rem, calc(var(--t) * 0.5));
+    font-size: min(0.66rem, calc(var(--t) * 0.5));
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
   }
 
   /* --- hover tip ---------------------------------------------------------- */
@@ -1111,8 +1407,29 @@ const spineLabel = (e: Entry) =>
 
   @media (max-width: 40rem) {
     .wrap {
-      --row: 9rem;
+      --row: 11rem;
       --headroom: 18px;
+    }
+
+    /* Short phone spines can't spare room for the head ornament; give it to the title. */
+    .spine__orn {
+      display: none;
+    }
+
+    .spine.leather,
+    .spine.leather[data-design] {
+      --title-top: 24px;
+      --title-bottom: 30px;
+      --num-y: 18px;
+    }
+
+    .spine.leather[data-design="3"] {
+      --title-top: 42px;
+      --title-bottom: 42px;
+    }
+
+    .spine.leather:not(:has(.spine__num)) {
+      --title-bottom: 20px;
     }
 
     .case {
