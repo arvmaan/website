@@ -26,7 +26,7 @@ export const HERO = {
 /** Top-level navigation. External entries open in a new tab. */
 export const NAV = [
   { label: "Projects", href: "/projects/" },
-  { label: "Writing", href: "/writing/" },
+  { label: "Shelf", href: "/shelf/" },
   { label: "GitHub", href: "https://github.com/arvmaan", external: true },
   {
     label: "LinkedIn",

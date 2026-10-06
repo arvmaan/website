@@ -1,0 +1,1151 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHeader from "../../components/PageHeader.astro";
+
+type Entry = CollectionEntry<"shelf">;
+
+const all = await getCollection("shelf");
+
+/**
+ * Every medium is drawn to one scale — hours spent — so a long book and a TV
+ * season can stand on the same shelf honestly. Defaults cover entries the
+ * metadata source had no length for.
+ */
+const PAGES_PER_HOUR = 50;
+function hours({ data: d }: Entry): number {
+  if (d.type === "book") return (d.pages ?? 350) / PAGES_PER_HOUR;
+  if (d.type === "film") return (d.runtime ?? 120) / 60;
+  return ((d.episodes ?? 8) * (d.runtime ?? 45)) / 60;
+}
+
+/**
+ * Thickness. Books and box sets grow with length (square-root, so a 1,300-page
+ * epic doesn't dwarf everything); a DVD case is a DVD case, whatever's inside.
+ */
+const DVD_WIDTH = 24;
+const spineWidth = (e: Entry) =>
+  e.data.type === "film" ? DVD_WIDTH : Math.round(10 + Math.sqrt(hours(e)) * 8);
+
+/** Stable string hash, so a series looks the same on every build. */
+const hash = (s: string) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7);
+
+/**
+ * Books in a series are printed as a set — one colour, one height, one spine
+ * design — the way they'd look on a real shelf. A standalone is a set of one.
+ */
+const setKey = (e: Entry) =>
+  e.data.series ? `${e.data.type}|${e.data.creator}|${e.data.series}` : e.data.type === "tv" ? `tv|${e.data.title}` : e.id;
+const SPINE_DESIGNS = 4;
+
+interface SpineSet {
+  color: string;
+  height: number;
+  design: number;
+}
+const sets = new Map<string, SpineSet>();
+// The set takes its colour from its earliest volume, so adding book 7 later
+// never repaints books 1–6.
+for (const e of [...all].sort((a, b) => (a.data.seriesNumber ?? a.data.season ?? 0) - (b.data.seriesNumber ?? b.data.season ?? 0))) {
+  const key = setKey(e);
+  if (sets.has(key)) continue;
+  const h = hash(key);
+  sets.set(key, {
+    color: e.data.color ?? "#5a5048",
+    // Films are uniform cases; books vary like real trim sizes.
+    height: e.data.type === "film" ? 0.74 : e.data.type === "tv" ? 0.9 : 0.78 + (h % 23) / 100,
+    design: h % SPINE_DESIGNS,
+  });
+}
+const spineSet = (e: Entry) => sets.get(setKey(e))!;
+
+const finished = all.filter((e) => e.data.status === "finished" || e.data.status === "abandoned");
+const nightstand = all.filter((e) => e.data.status === "in-progress");
+const queued = all
+  .filter((e) => e.data.status === "queued")
+  .sort((a, b) => (a.data.added?.valueOf() ?? 0) - (b.data.added?.valueOf() ?? 0));
+
+/**
+ * Shelved the way a person shelves: books by author surname, each series kept
+ * together in reading order, then TV, then films. Dates live in the detail sheet.
+ */
+const TYPE_ORDER = { book: 0, tv: 1, film: 2 } as const;
+const surname = (name = "") => name.trim().split(/\s+/).at(-1) ?? "";
+const shelved = [...finished].sort(
+  (a, b) =>
+    TYPE_ORDER[a.data.type] - TYPE_ORDER[b.data.type] ||
+    surname(a.data.creator).localeCompare(surname(b.data.creator)) ||
+    (a.data.creator ?? "").localeCompare(b.data.creator ?? "") ||
+    // Series before standalones within an author, then series by name.
+    Number(!a.data.series) - Number(!b.data.series) ||
+    (a.data.series ?? a.data.title).localeCompare(b.data.series ?? b.data.title) ||
+    (a.data.seriesNumber ?? a.data.season ?? 0) - (b.data.seriesNumber ?? b.data.season ?? 0),
+);
+
+/** Each medium starts on its own shelf: books, then box sets, then DVDs. */
+const sections = (["book", "tv", "film"] as const)
+  .map((type) => ({ type, items: shelved.filter((e) => e.data.type === type) }))
+  .filter((sec) => sec.items.length > 0 || sec.type === "book");
+
+/** Lying flat at the end of the last shelf: what's being read now on top of what's next. */
+const stack = [...queued, ...nightstand];
+const stackLabel = [nightstand.length && "reading now", queued.length && "up next"].filter(Boolean).join(" & ");
+
+const TYPE_LABEL = { book: ["book", "books"], film: ["film", "films"], tv: ["season", "seasons"] } as const;
+const nf = new Intl.NumberFormat("en-CA");
+
+// --- headline numbers ---
+const rated = finished.filter((e) => e.data.rating);
+const typesPresent = (["book", "film", "tv"] as const).filter((t) => finished.some((e) => e.data.type === t));
+const stats = [
+  ...typesPresent.map((t) => ({
+    value: nf.format(finished.filter((e) => e.data.type === t).length),
+    label: TYPE_LABEL[t][1],
+  })),
+  {
+    value: nf.format(finished.reduce((s, e) => s + (e.data.type === "book" ? e.data.pages ?? 0 : 0), 0)),
+    label: "pages",
+  },
+  { value: `≈${nf.format(Math.round(finished.reduce((s, e) => s + hours(e), 0)))}`, label: "hours" },
+  {
+    value: rated.length
+      ? (rated.reduce((s, e) => s + e.data.rating!, 0) / rated.length).toFixed(1)
+      : "—",
+    label: "avg rating",
+  },
+];
+
+// --- small charts ---
+const creatorCounts = new Map<string, number>();
+for (const e of finished) if (e.data.creator) creatorCounts.set(e.data.creator, (creatorCounts.get(e.data.creator) ?? 0) + 1);
+const topCreators = [...creatorCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+const topMax = topCreators[0]?.[1] ?? 1;
+
+const ratingBuckets = [5, 4, 3, 2, 1].map((r) => ({
+  r,
+  n: rated.filter((e) => Math.max(1, Math.floor(e.data.rating!)) === r).length,
+}));
+const ratingMax = Math.max(1, ...ratingBuckets.map((b) => b.n));
+
+// --- what the detail sheet needs, keyed by id ---
+const monthYear = new Intl.DateTimeFormat("en-CA", { month: "short", year: "numeric", timeZone: "UTC" });
+const fullDate = new Intl.DateTimeFormat("en-CA", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+function kicker({ data: d }: Entry) {
+  const medium = d.type === "book" ? "Book" : d.type === "film" ? "Film" : "TV";
+  if (d.type === "tv" && d.season) return `${medium} · Season ${d.season}`;
+  if (d.series) return `${medium} · ${d.series}${d.seriesNumber != null ? ` #${d.seriesNumber}` : ""}`;
+  return medium;
+}
+
+function facts({ data: d }: Entry) {
+  const out: string[] = [];
+  if (d.year) out.push(String(d.year));
+  if (d.type === "book" && d.pages) out.push(`${nf.format(d.pages)} pages`);
+  if (d.type === "film" && d.runtime) out.push(`${d.runtime} min`);
+  if (d.type === "tv" && d.episodes) out.push(`${d.episodes} episodes`);
+  if (d.status === "queued") out.push("Up next");
+  else if (d.status === "in-progress") out.push("Reading now");
+  else if (d.status === "abandoned") out.push("Didn't finish");
+  else if (d.finished)
+    out.push(d.dateApprox ? `Logged ${monthYear.format(d.finished)}` : `Finished ${fullDate.format(d.finished)}`);
+  return out;
+}
+
+const sheetData = Object.fromEntries(
+  all.map((e) => [
+    e.id,
+    {
+      kicker: kicker(e),
+      title: e.data.title,
+      creator: e.data.creator,
+      rating: e.data.rating,
+      facts: facts(e),
+      cover: e.data.cover,
+      review: e.data.review,
+      link: e.data.link,
+    },
+  ]),
+);
+
+const linkLabel = (url?: string) =>
+  !url ? "" : url.includes("goodreads") ? "Goodreads" : url.includes("wikipedia") ? "Wikipedia"
+    : url.includes("tvmaze") ? "TVmaze" : url.includes("openlibrary") ? "Open Library" : "Source";
+
+const spineLabel = (e: Entry) =>
+  [e.data.title, e.data.creator, e.data.rating ? `rated ${e.data.rating} of 5` : "unrated"]
+    .filter(Boolean)
+    .join(", ");
+---
+
+<Base
+  title="Shelf"
+  description="Every book, film, and season of TV I've finished — rated, reviewed, and shelved."
+>
+  <div class="wrap">
+    <PageHeader
+      eyebrow="Shelf"
+      title="What I've been reading & watching"
+      lede="Everything I've finished, shelved by author and series. Pull a book off the shelf for when I read it and what I thought. An agent keeps it up to date — I tell it what I just finished, it does the rest."
+    />
+
+    <dl class="stats">
+      {
+        stats.map((s) => (
+          <div class="stat">
+            <dt>{s.label}</dt>
+            <dd>{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="controls">
+      <p class="legend">
+        <span class="legend__key legend__key--w" aria-hidden="true"></span> Thicker — longer
+        <span class="legend__key legend__key--fav" aria-hidden="true"></span> Bookmark or gold sticker — five stars
+        {stack.length > 0 && (
+          <>
+            <span class="legend__key legend__key--stack" aria-hidden="true"></span> Lying flat — {stackLabel}
+          </>
+        )}
+      </p>
+    </div>
+
+    <section class="case" aria-label="Bookshelf">
+      {sections.map((sec) => (
+      <ol class="row" aria-label={TYPE_LABEL[sec.type][1]}>
+        {
+          sec.items.map((e) => {
+            const set = spineSet(e);
+            const w = spineWidth(e);
+            return (
+              <li data-type={e.data.type} style={`--w:${w}px;--h:${set.height};--c:${set.color}`}>
+                <button
+                  type="button"
+                  class:list={["spine", { "is-dnf": e.data.status === "abandoned", "is-thin": w < 18 }]}
+                  data-id={e.id}
+                  data-type={e.data.type}
+                  data-design={e.data.type === "film" ? undefined : set.design}
+                  aria-label={spineLabel(e)}
+                >
+                  {e.data.rating === 5 && <span class="bookmark" aria-hidden="true" />}
+                  <span class="spine__title">{e.data.title}</span>
+                  {e.data.type === "tv" && e.data.season && <span class="spine__mark">S{e.data.season}</span>}
+                  {e.data.type === "book" && e.data.seriesNumber != null && Number.isInteger(e.data.seriesNumber) && (
+                    <span class="spine__mark">{e.data.seriesNumber}</span>
+                  )}
+                </button>
+              </li>
+            );
+          })
+        }
+        {
+          sec.type === "book" && stack.length > 0 && (
+            <li class="stack" data-type="book" aria-label={stackLabel}>
+              {stack.map((e) => (
+                <button
+                  type="button"
+                  class="slab"
+                  data-id={e.id}
+                  aria-label={`${e.data.title}, ${e.data.status === "in-progress" ? "reading now" : "up next"}`}
+                  style={`--t:${Math.round(spineWidth(e) * 0.75)}px;--len:${118 + (hash(e.id) % 18)}px;--x:${(hash(e.id) % 9) - 4}px;--c:${spineSet(e).color}`}
+                >
+                  <span class="slab__title">{e.data.title}</span>
+                </button>
+              ))}
+            </li>
+          )
+        }
+      </ol>
+      ))}
+    </section>
+
+    <section class="insights">
+      <div class="chart">
+        <h2 class="section-title">Most shelved</h2>
+        <ul class="bars">
+          {
+            topCreators.map(([name, n]) => (
+              <li>
+                <span class="bars__label">{name}</span>
+                <span class="bars__track">
+                  <span class="bars__fill" style={`--v:${n / topMax}`} />
+                </span>
+                <span class="bars__value">{n}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="chart">
+        <h2 class="section-title">Ratings</h2>
+        <ul class="bars">
+          {
+            ratingBuckets.map(({ r, n }) => (
+              <li>
+                <span class="bars__label" aria-label={`${r} stars`}>
+                  {"★".repeat(r)}
+                </span>
+                <span class="bars__track">
+                  <span class="bars__fill" style={`--v:${n / ratingMax}`} />
+                </span>
+                <span class="bars__value">{n}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <div class="tip" role="tooltip" id="shelf-tip" hidden></div>
+
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <div class="sheet__inner">
+      <div class="sheet__cover"><img alt="" /></div>
+      <div class="sheet__body">
+        <p class="eyebrow sheet__kicker"></p>
+        <h2 class="sheet__title" id="sheet-title"></h2>
+        <p class="sheet__creator"></p>
+        <p class="sheet__stars"></p>
+        <ul class="sheet__facts"></ul>
+        <div class="sheet__review"></div>
+        <a class="sheet__link" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+    </div>
+    <div class="sheet__nav">
+      <button type="button" data-step="-1" aria-label="Previous">←</button>
+      <button type="button" data-step="1" aria-label="Next">→</button>
+      <button type="button" class="sheet__close" aria-label="Close">Close</button>
+    </div>
+  </dialog>
+
+  <script is:inline type="application/json" id="shelf-data" set:html={JSON.stringify(
+    Object.fromEntries(Object.entries(sheetData).map(([id, d]) => [id, { ...d, linkLabel: linkLabel(d.link) }])),
+  ).replace(/</g, "\\u003c")} />
+</Base>
+
+<script>
+  type Item = {
+    kicker: string;
+    title: string;
+    creator?: string;
+    rating?: number;
+    facts: string[];
+    cover?: string;
+    review?: string;
+    link?: string;
+    linkLabel: string;
+  };
+
+  const data: Record<string, Item> = JSON.parse(document.getElementById("shelf-data")!.textContent!);
+  const shelf = document.querySelector<HTMLElement>(".case")!;
+  const sheet = document.getElementById("sheet") as HTMLDialogElement;
+  const tip = document.getElementById("shelf-tip")!;
+  const $ = <T extends Element = HTMLElement>(sel: string) => sheet.querySelector<T>(sel)!;
+
+  /** Glyphs only do halves, so round for the stars; the exact number sits beside them. */
+  const stars = (r: number) => {
+    const h = Math.round(r * 2) / 2;
+    return [1, 2, 3, 4, 5].map((i) => (h >= i ? "★" : h >= i - 0.5 ? "⯪" : "☆")).join("");
+  };
+  const ratingText = (r: number) => `${stars(r)}  ${r}`;
+
+  // --- hover tip -----------------------------------------------------------
+  function showTip(el: HTMLElement) {
+    const d = data[el.dataset.id!];
+    if (!d) return;
+    tip.replaceChildren();
+    const t = document.createElement("strong");
+    t.textContent = d.title;
+    const by = document.createElement("span");
+    by.textContent = [d.creator, d.rating ? stars(d.rating) : null].filter(Boolean).join("  ");
+    tip.append(t, by);
+    tip.hidden = false;
+    const r = el.getBoundingClientRect();
+    const w = tip.offsetWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
+    tip.style.transform = `translate(${x}px, ${r.top - tip.offsetHeight - 18}px)`;
+  }
+  const hideTip = () => (tip.hidden = true);
+
+  shelf.querySelectorAll<HTMLElement>(".spine, .slab").forEach((el) => {
+    el.addEventListener("pointerenter", (ev) => ev.pointerType === "mouse" && showTip(el));
+    el.addEventListener("pointerleave", hideTip);
+    el.addEventListener("focus", () => el.matches(":focus-visible") && showTip(el));
+    el.addEventListener("blur", hideTip);
+  });
+  window.addEventListener("scroll", hideTip, { passive: true });
+
+  // --- detail sheet --------------------------------------------------------
+  let current: HTMLElement | null = null;
+
+  function open(el: HTMLElement) {
+    const d = data[el.dataset.id!];
+    if (!d) return;
+    current = el;
+    hideTip();
+
+    $(".sheet__kicker").textContent = d.kicker;
+    $(".sheet__title").textContent = d.title;
+    $(".sheet__creator").textContent = d.creator ?? "";
+
+    const st = $(".sheet__stars");
+    st.textContent = d.rating ? ratingText(d.rating) : "Unrated";
+    st.setAttribute("aria-label", d.rating ? `Rated ${d.rating} out of 5` : "Unrated");
+
+    $(".sheet__facts").replaceChildren(
+      ...d.facts.map((f) => Object.assign(document.createElement("li"), { textContent: f })),
+    );
+
+    const img = $<HTMLImageElement>(".sheet__cover img");
+    $(".sheet__cover").hidden = !d.cover;
+    if (d.cover) img.src = d.cover;
+
+    const review = $(".sheet__review");
+    review.replaceChildren(
+      ...(d.review ?? "").split(/\n{2,}/).filter(Boolean).map((p) =>
+        Object.assign(document.createElement("p"), { textContent: p }),
+      ),
+    );
+
+    const link = $<HTMLAnchorElement>(".sheet__link");
+    link.hidden = !d.link;
+    if (d.link) {
+      link.href = d.link;
+      link.textContent = `${d.linkLabel} ↗`;
+    }
+
+    if (!sheet.open) sheet.showModal();
+  }
+
+  /** Step through whatever is currently visible on the shelf, in shelf order. */
+  function step(dir: number) {
+    if (!current) return;
+    const visible = [...document.querySelectorAll<HTMLElement>(".spine, .slab")].filter(
+      (el) => el.offsetParent !== null,
+    );
+    const i = visible.indexOf(current);
+    const next = visible[(i + dir + visible.length) % visible.length];
+    if (next) open(next);
+  }
+
+  document.querySelectorAll<HTMLElement>(".spine, .slab").forEach((el) =>
+    el.addEventListener("click", () => open(el)),
+  );
+  sheet.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
+    b.addEventListener("click", () => step(Number(b.dataset.step))),
+  );
+  $(".sheet__close").addEventListener("click", () => sheet.close());
+  sheet.addEventListener("keydown", (ev) => {
+    if (ev.key === "ArrowRight") step(1);
+    if (ev.key === "ArrowLeft") step(-1);
+  });
+  // Clicking the dimmed backdrop (the dialog element itself, outside its content) closes it.
+  sheet.addEventListener("click", (ev) => ev.target === sheet && sheet.close());
+  // Hand focus back to the spine the sheet ended on, not the one it opened from.
+  sheet.addEventListener("close", () => current?.focus());
+</script>
+
+<style>
+  .wrap {
+    padding: clamp(2.5rem, 7vh, 5rem) var(--gutter) 6rem;
+    min-height: 100svh;
+    --row: clamp(10rem, 17vw, 12.5rem);
+    --headroom: 26px;
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone);
+    margin-bottom: 1.1rem;
+  }
+
+  /* --- headline numbers --------------------------------------------------- */
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem clamp(1.8rem, 4vw, 3.5rem);
+    margin: 0 0 clamp(2.5rem, 6vh, 3.5rem);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .stat dt {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- filters + legend --------------------------------------------------- */
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.6rem;
+    margin: 0;
+    max-width: none;
+    font-size: 0.78rem;
+    color: var(--faint);
+  }
+
+  .legend__key {
+    display: inline-block;
+    background: var(--faint);
+    border-radius: 1px;
+    opacity: 0.7;
+  }
+
+  .legend__key:not(:first-child) {
+    margin-left: 0.8rem;
+  }
+
+  .legend__key--w {
+    width: 14px;
+    height: 6px;
+  }
+
+  .legend__key--fav {
+    width: 6px;
+    height: 12px;
+    background: #d4553a;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
+  }
+
+  .legend__key--stack {
+    width: 16px;
+    height: 5px;
+    box-shadow: 0 -7px 0 var(--faint);
+    margin-top: 7px;
+  }
+
+  /* --- the bookcase ------------------------------------------------------
+     The case's own background is the wood frame; the row inside paints the
+     back panel and, with one repeating gradient, a plank under every wrapped
+     line of books — however many lines the width produces. */
+
+  .case {
+    --plank: 16px;
+    --wood: #4a3020;
+    --wood-light: #7a5536;
+    --wood-dark: #24160d;
+    padding: 14px 16px 12px;
+    border-radius: 4px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255, 220, 180, 0.025) 0 1px, transparent 1px 6px, rgba(0, 0, 0, 0.05) 6px 9px),
+      linear-gradient(180deg, var(--wood) 0%, #3b2618 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 220, 180, 0.12),
+      inset 1px 0 0 rgba(255, 220, 180, 0.06),
+      0 30px 60px -20px rgba(0, 0, 0, 0.8),
+      0 2px 0 var(--wood-dark);
+  }
+
+  .row {
+    list-style: none;
+    margin: 0;
+    padding: 0 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    column-gap: 2px;
+    row-gap: 0;
+    box-shadow:
+      inset 10px 0 18px -8px rgba(0, 0, 0, 0.7),
+      inset -10px 0 18px -8px rgba(0, 0, 0, 0.7);
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        /* shadow cast by the plank above */
+        rgba(0, 0, 0, 0.65) 0,
+        transparent 26px,
+        transparent calc(var(--row) - var(--plank)),
+        /* plank: lit top face, then the front edge */
+        var(--wood-light) calc(var(--row) - var(--plank)),
+        #694830 calc(var(--row) - var(--plank) + 4px),
+        var(--wood) calc(var(--row) - var(--plank) + 4px),
+        #3a2618 calc(var(--row) - 2px),
+        var(--wood-dark) calc(var(--row) - 2px),
+        var(--wood-dark) var(--row)
+      ),
+      linear-gradient(180deg, #1a110c, #120c08);
+  }
+
+  .row > li {
+    height: var(--row);
+    display: flex;
+    align-items: flex-end;
+    /* Books stand on the plank's top face, not floating above its edge. */
+    padding-bottom: calc(var(--plank) - 3px);
+  }
+
+  .spine {
+    /* Covers range from near-white to near-black; clamp the lightness so every
+       spine sits in one tonal band and the title stays readable on all of them. */
+    --base: color-mix(in oklab, var(--c) 68%, #06060c);
+    --rule: rgba(242, 235, 221, 0.24);
+    position: relative;
+    width: var(--w);
+    height: calc((var(--row) - var(--plank) - var(--headroom)) * var(--h));
+    padding: 0;
+    border: 0;
+    border-radius: 2px 2px 1px 1px;
+    color: var(--bone);
+    cursor: pointer;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.5),
+        transparent 16%,
+        rgba(255, 255, 255, 0.1) 42%,
+        transparent 64%,
+        rgba(0, 0, 0, 0.4)
+      ),
+      var(--base);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      2px 0 3px rgba(0, 0, 0, 0.35);
+    transition:
+      transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1),
+      opacity 0.2s ease,
+      filter 0.2s ease;
+  }
+
+  @supports (color: oklch(from red l c h)) {
+    .spine {
+      --base: oklch(from var(--c) clamp(0.3, l, 0.56) min(c, 0.14) h);
+    }
+  }
+
+  /* Four spine designs. A series always shares one, so a set reads as a set. */
+  .spine::before,
+  .spine::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  /* 0 — classic: double rules at head and tail. */
+  .spine[data-design="0"]::before,
+  .spine[data-design="0"]::after {
+    height: 4px;
+    border-block: 1px solid var(--rule);
+  }
+  .spine[data-design="0"]::before { top: 7px; }
+  .spine[data-design="0"]::after { bottom: 7px; }
+
+  /* 1 — publisher block: a dark band across the head, uppercase sans title. */
+  .spine[data-design="1"]::before {
+    top: 0;
+    height: 16%;
+    background: rgba(6, 6, 12, 0.42);
+    border-bottom: 1px solid var(--rule);
+  }
+  .spine[data-design="1"]::after {
+    bottom: 6px;
+    border-top: 1px solid var(--rule);
+  }
+  .spine[data-design="1"] .spine__title {
+    top: calc(16% + 8px);
+    font-family: var(--font-body);
+    font-size: min(0.58rem, calc(var(--w) * 0.36));
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* 2 — foil: thin gilt rules, italic title. */
+  .spine[data-design="2"] {
+    --rule: rgba(236, 196, 128, 0.6);
+  }
+  .spine[data-design="2"]::before,
+  .spine[data-design="2"]::after {
+    height: 6px;
+    border-block: 1px solid var(--rule);
+  }
+  .spine[data-design="2"]::before { top: 10px; }
+  .spine[data-design="2"]::after { bottom: 10px; }
+  .spine[data-design="2"] .spine__title {
+    font-style: italic;
+    color: #f1dcb4;
+  }
+
+  /* 3 — title plate: a lighter label panel the title sits on. */
+  .spine[data-design="3"]::before {
+    top: 14%;
+    bottom: 22%;
+    left: 2px;
+    right: 2px;
+    border: 1px solid var(--rule);
+    background: rgba(242, 235, 221, 0.07);
+  }
+
+  .spine__title {
+    position: absolute;
+    inset: 16px 0 22px;
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: var(--font-display);
+    font-size: min(0.72rem, calc(var(--w) * 0.44));
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  .spine[data-design="3"] .spine__title {
+    top: calc(14% + 6px);
+  }
+
+  .spine.is-thin .spine__title {
+    display: none;
+  }
+
+  .spine__mark {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: rgba(242, 235, 221, 0.75);
+    display: none;
+  }
+
+  .spine:not(.is-thin) .spine__mark {
+    display: block;
+  }
+
+  .spine:not(.is-thin):has(.spine__mark) .spine__title {
+    bottom: 26px;
+  }
+
+  /* Five stars: a bookmark ribbon left in, poking out of the top. */
+  .bookmark {
+    position: absolute;
+    top: -13px;
+    right: 22%;
+    width: 6px;
+    height: 20px;
+    background: linear-gradient(90deg, #c4462a, #e0603c 50%, #b03c22);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  }
+
+  /* Films: DVD cases. Black plastic rim, the poster colour showing through
+     the clear sleeve as the spine insert, a gloss streak, and the logo up top. */
+  .spine[data-type="film"] {
+    border: 2px solid #0b0b10;
+    border-radius: 3px;
+    background:
+      linear-gradient(90deg, transparent 0, rgba(255, 255, 255, 0.26) 22%, transparent 38%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.35), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.35)),
+      var(--base);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      2px 0 3px rgba(0, 0, 0, 0.45);
+  }
+
+  .spine[data-type="film"]::before {
+    content: "DVD";
+    top: 5px;
+    left: 1px;
+    right: 1px;
+    padding: 1px 0;
+    background: #0b0b10;
+    color: rgba(242, 235, 221, 0.85);
+    font-family: var(--font-body);
+    font-size: 0.4rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .spine[data-type="film"]::after {
+    bottom: 5px;
+    height: 0;
+    border-top: 1px solid rgba(242, 235, 221, 0.3);
+  }
+
+  .spine[data-type="film"] .spine__title {
+    inset: 22px 0 10px;
+    font-family: var(--font-body);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Five-star films get a gold sticker rather than a bookmark. */
+  .spine[data-type="film"] .bookmark {
+    top: auto;
+    bottom: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    clip-path: none;
+    background: radial-gradient(circle at 35% 35%, #ffe3a3, #d9a441 60%, #a8741f);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  }
+
+  .spine[data-type="film"]:has(.bookmark) .spine__title {
+    bottom: 24px;
+  }
+
+  /* TV: a box set — squared off, with a heavier band carrying the season. */
+  .spine[data-type="tv"] {
+    border-radius: 1px;
+  }
+
+  /* Didn't finish: leans against its neighbour, a little faded. */
+  .spine.is-dnf {
+    transform: rotate(-6deg);
+    transform-origin: bottom left;
+    filter: saturate(0.4) brightness(0.8);
+  }
+
+  /* Pulling a book half out of the shelf. */
+  .spine:hover,
+  .spine:focus-visible {
+    transform: translateY(calc(var(--headroom) * -0.7));
+  }
+
+  .row:hover .spine:not(:hover),
+  .row:hover .slab:not(:hover) {
+    opacity: 0.6;
+  }
+
+  .spine:focus-visible,
+  .slab:focus-visible {
+    outline-offset: 2px;
+  }
+
+  /* --- the up-next stack, lying flat ------------------------------------- */
+
+  .stack {
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 14px;
+  }
+
+  .slab {
+    --base: color-mix(in oklab, var(--c) 68%, #06060c);
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--len);
+    height: var(--t);
+    padding: 0 10px;
+    border: 0;
+    border-radius: 1px 2px 2px 1px;
+    color: var(--bone);
+    cursor: pointer;
+    transform: translateX(var(--x));
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 40%, rgba(0, 0, 0, 0.35)),
+      var(--base);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.45);
+    transition:
+      transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1),
+      opacity 0.2s ease;
+  }
+
+  @supports (color: oklch(from red l c h)) {
+    .slab {
+      --base: oklch(from var(--c) clamp(0.3, l, 0.56) min(c, 0.14) h);
+    }
+  }
+
+  .slab:hover,
+  .slab:focus-visible {
+    transform: translateX(calc(var(--x) + 8px));
+  }
+
+  .slab__title {
+    font-family: var(--font-display);
+    font-size: min(0.62rem, calc(var(--t) * 0.5));
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* --- hover tip ---------------------------------------------------------- */
+
+  .tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    max-width: 16rem;
+    padding: 0.55rem 0.75rem;
+    background: rgba(13, 13, 22, 0.96);
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    pointer-events: none;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .tip :global(strong) {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: var(--bone);
+  }
+
+  .tip :global(span) {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--dim);
+    white-space: pre;
+  }
+
+  /* --- small charts ------------------------------------------------------- */
+
+  .insights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 2.5rem clamp(2rem, 6vw, 5rem);
+    margin-top: clamp(3.5rem, 9vh, 5.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .bars li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr 2ch;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.82rem;
+  }
+
+  .bars__label {
+    color: var(--dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bars__track {
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(242, 235, 221, 0.06);
+  }
+
+  .bars__fill {
+    display: block;
+    height: 100%;
+    width: calc(var(--v) * 100%);
+    min-width: 4px;
+    border-radius: 4px;
+    background: var(--ember);
+  }
+
+  .bars__value {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- detail sheet ------------------------------------------------------- */
+
+  .sheet {
+    width: min(46rem, calc(100vw - 2rem));
+    max-height: calc(100svh - 3rem);
+    padding: 0;
+    border: 1px solid var(--rule-strong);
+    border-radius: 12px;
+    background: var(--ink-soft);
+    color: var(--bone);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  .sheet::backdrop {
+    background: rgba(6, 6, 12, 0.7);
+    backdrop-filter: blur(6px);
+  }
+
+  .sheet__inner {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 1.8rem;
+    padding: 1.8rem 1.8rem 1rem;
+  }
+
+  .sheet__cover img {
+    width: 100%;
+    border-radius: 4px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  }
+
+  .sheet__cover[hidden] + .sheet__body {
+    grid-column: 1 / -1;
+  }
+
+  .sheet__kicker {
+    margin-bottom: 0.7rem;
+  }
+
+  .sheet__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .sheet__creator {
+    margin: 0.4rem 0 0;
+    color: var(--dim);
+  }
+
+  .sheet__stars {
+    margin: 0.8rem 0 0;
+    color: #f3c27a;
+    letter-spacing: 0.12em;
+  }
+
+  .sheet__facts {
+    list-style: none;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .sheet__review {
+    margin-top: 1.3rem;
+    font-size: 0.92rem;
+    color: var(--dim);
+  }
+
+  .sheet__review :global(p:first-child) {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--bone);
+  }
+
+  .sheet__link {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+  }
+
+  .sheet__nav {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding: 0.8rem 1.8rem 1.4rem;
+  }
+
+  .sheet__nav button {
+    font: inherit;
+    font-size: 0.8rem;
+    color: var(--dim);
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+  }
+
+  .sheet__nav button:hover {
+    color: var(--bone);
+    border-color: var(--bone);
+  }
+
+  /* --- small screens ------------------------------------------------------ */
+
+  @media (max-width: 40rem) {
+    .wrap {
+      --row: 9rem;
+      --headroom: 18px;
+    }
+
+    .case {
+      padding: 10px 10px 8px;
+    }
+
+    .row {
+      padding: 0 6px;
+    }
+
+    .spine {
+      width: calc(var(--w) * 0.82);
+    }
+
+    .sheet__inner {
+      grid-template-columns: 6.5rem 1fr;
+      gap: 1.1rem;
+      padding: 1.3rem 1.3rem 0.6rem;
+    }
+
+    .sheet__nav {
+      padding: 0.6rem 1.3rem 1.1rem;
+    }
+
+    .bars li {
+      grid-template-columns: 7.5rem 1fr 2ch;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spine:hover,
+    .spine:focus-visible {
+      transform: none;
+    }
+  }
+</style>

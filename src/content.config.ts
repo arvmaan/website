@@ -1,5 +1,5 @@
 import { defineCollection } from "astro:content";
-import { glob } from "astro/loaders";
+import { file, glob } from "astro/loaders";
 // Astro 7 deprecates re-exporting `z` from astro:content; import it directly
 // from the copy Astro already ships so versions can never drift.
 import { z } from "astro/zod";
@@ -32,16 +32,42 @@ const projects = defineCollection({
   }),
 });
 
-const writing = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/writing" }),
+/**
+ * Everything I've read or watched. One JSON array rather than a file per item:
+ * entries are small, numerous, and written by `scripts/shelf.mjs` (usually via
+ * an agent), which keeps the file sorted and pre-validated. The schema here is
+ * the backstop — a hand edit that breaks it fails the build.
+ */
+const shelf = defineCollection({
+  loader: file("src/data/shelf.json"),
   schema: z.object({
+    type: z.enum(["book", "film", "tv"]),
     title: z.string(),
-    description: z.string(),
-    published: z.coerce.date(),
-    updated: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]),
-    draft: z.boolean().default(false),
+    /** Author, director, or network — whoever the work is "by". */
+    creator: z.string().optional(),
+    series: z.string().optional(),
+    seriesNumber: z.number().optional(),
+    /** TV only: each season is its own entry. */
+    season: z.number().int().optional(),
+    status: z.enum(["finished", "in-progress", "queued", "abandoned"]),
+    /** Quarter steps — 4.75 is a real opinion. */
+    rating: z.number().min(0.25).max(5).multipleOf(0.25).optional(),
+    finished: z.coerce.date().optional(),
+    /** True when `finished` is only when it was logged, not when it was read. */
+    dateApprox: z.boolean().default(false),
+    added: z.coerce.date().optional(),
+    /** Year the work came out. */
+    year: z.number().int().optional(),
+    pages: z.number().int().optional(),
+    /** Minutes — a film's length, or a TV episode's. */
+    runtime: z.number().int().optional(),
+    episodes: z.number().int().optional(),
+    cover: z.string().optional(),
+    /** Spine colour, sampled from the cover by the shelf script. */
+    color: z.string().regex(/^#[0-9a-f]{6}$/i).optional(),
+    review: z.string().optional(),
+    link: z.string().url().optional(),
   }),
 });
 
-export const collections = { projects, writing };
+export const collections = { projects, shelf };
