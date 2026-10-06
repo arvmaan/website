@@ -98,9 +98,21 @@ const shelved = [...finished].sort(
     (a.data.seriesNumber ?? a.data.season ?? 0) - (b.data.seriesNumber ?? b.data.season ?? 0),
 );
 
+/**
+ * Pages render most-recent-first; the series order above is kept as an index
+ * on each item so the sort control can restore it without a round trip.
+ */
+const seriesIndex = new Map(shelved.map((e, i) => [e.id, i]));
+const byRecent = (items: Entry[]) =>
+  [...items].sort(
+    (a, b) =>
+      (b.data.finished?.valueOf() ?? 0) - (a.data.finished?.valueOf() ?? 0) ||
+      seriesIndex.get(a.id)! - seriesIndex.get(b.id)!,
+  );
+
 /** Each medium starts on its own shelf: books, then box sets, then DVDs. */
 const sections = (["book", "tv", "film"] as const)
-  .map((type) => ({ type, items: shelved.filter((e) => e.data.type === type) }))
+  .map((type) => ({ type, items: byRecent(shelved.filter((e) => e.data.type === type)) }))
   .filter((sec) => sec.items.length > 0 || sec.type === "book");
 
 /** Lying flat at the end of the last shelf: what's being read now on top of what's next. */
@@ -222,11 +234,11 @@ const spineLabel = (e: Entry) =>
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
             <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" />
           </svg>
-          <span class="sort__current">By series</span>
+          <span class="sort__current">Recent first</span>
         </summary>
         <div class="sort__menu" role="group" aria-label="Sort by">
-          <button type="button" data-sort="series" aria-pressed="true">By series</button>
-          <button type="button" data-sort="recent" aria-pressed="false">Recent first</button>
+          <button type="button" data-sort="recent" aria-pressed="true">Recent first</button>
+          <button type="button" data-sort="series" aria-pressed="false">By series</button>
         </div>
       </details>
       <p class="legend">
@@ -252,7 +264,7 @@ const spineLabel = (e: Entry) =>
             return (
               <li
                 data-type={e.data.type}
-                data-finished={e.data.finished?.valueOf()}
+                data-series={seriesIndex.get(e.id)}
                 style={`--w:${w}px;--h:${set.height};--c:${set.color}`}
               >
                 <button
@@ -394,27 +406,24 @@ const spineLabel = (e: Entry) =>
   const ratingText = (r: number) => `${stars(r)}  ${r}`;
 
   // --- sort ----------------------------------------------------------------
-  // The server renders series order; "recent" re-sorts each shelf in place by
-  // finish date. The stack lying flat always stays at the end of its shelf.
+  // The server renders most-recent-first; "series" re-sorts each shelf in place
+  // by the series index baked into each item. The stack lying flat always
+  // stays at the end of its shelf.
   const sortMenu = document.querySelector<HTMLDetailsElement>(".sort")!;
   const rows = [...shelf.querySelectorAll<HTMLOListElement>(".row")];
-  const seriesOrder = new Map(rows.map((r) => [r, [...r.children] as HTMLElement[]]));
+  const recentOrder = new Map(rows.map((r) => [r, [...r.children] as HTMLElement[]]));
 
   function sortBy(mode: string) {
     for (const row of rows) {
-      const original = seriesOrder.get(row)!;
+      const original = recentOrder.get(row)!;
       const items = original.filter((li) => !li.classList.contains("stack"));
-      if (mode === "recent")
-        items.sort((a, b) => Number(b.dataset.finished ?? 0) - Number(a.dataset.finished ?? 0));
+      if (mode === "series") items.sort((a, b) => Number(a.dataset.series) - Number(b.dataset.series));
       row.append(...items, ...original.filter((li) => li.classList.contains("stack")));
     }
     sortMenu.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.sort === mode));
       if (b.dataset.sort === mode) sortMenu.querySelector(".sort__current")!.textContent = b.textContent;
     });
-    try {
-      localStorage.setItem("shelf-sort", mode);
-    } catch {}
   }
 
   sortMenu.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((b) =>
@@ -426,9 +435,6 @@ const spineLabel = (e: Entry) =>
   document.addEventListener("click", (ev) => {
     if (sortMenu.open && !sortMenu.contains(ev.target as Node)) sortMenu.open = false;
   });
-  try {
-    if (localStorage.getItem("shelf-sort") === "recent") sortBy("recent");
-  } catch {}
 
   // --- hover tip -----------------------------------------------------------
   function showTip(el: HTMLElement) {
