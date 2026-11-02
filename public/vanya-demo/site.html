@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vanya &amp; Jasneal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500&family=Tiro+Devanagari+Hindi&display=swap">
+<style>
+/* Garden walk: through the flowers to the marble jharokha. One light world; every colour set explicitly. */
+:root { color-scheme: light; --a-peacock: url("art/peacock.webp"); --a-lotus: url("art/lotus.webp"); --a-jasmine: url("art/jasmine.webp"); --a-kadam: url("art/kadam.webp"); --a-taj-gateway: url("art/taj-gateway.webp"); --a-couple: url("art/couple.webp"); --a-rose: url("art/rose.webp"); --a-rose-red: url("art/rose-red.webp"); --a-marigold: url("art/marigold.webp"); --a-banana: url("art/banana.webp"); --a-plumeria: url("art/plumeria.webp"); --a-amber: url("art/amber.webp"); --a-rockies: url("art/rockies.webp"); --a-rockies2: url("art/rockies2.webp"); --a-peacock-solo: url("art/peacock-solo.webp"); --a-lotus-head: url("art/lotus-head.webp"); --a-rose-head: url("art/rose-head.webp"); } @media (max-width: 820px) { :root { --a-peacock: url("art/m/peacock.webp"); --a-lotus: url("art/m/lotus.webp"); --a-jasmine: url("art/m/jasmine.webp"); --a-kadam: url("art/m/kadam.webp"); --a-taj-gateway: url("art/m/taj-gateway.webp"); --a-couple: url("art/m/couple.webp"); --a-rose: url("art/m/rose.webp"); --a-rose-red: url("art/m/rose-red.webp"); --a-marigold: url("art/m/marigold.webp"); --a-banana: url("art/m/banana.webp"); --a-plumeria: url("art/m/plumeria.webp"); --a-amber: url("art/m/amber.webp"); --a-rockies: url("art/m/rockies.webp"); --a-rockies2: url("art/m/rockies2.webp"); --a-peacock-solo: url("art/m/peacock-solo.webp"); --a-lotus-head: url("art/m/lotus-head.webp"); --a-rose-head: url("art/m/rose-head.webp"); }
+* { box-sizing: border-box; }
+body { margin: 0; background: #EEF3F0; color: #26402F; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; font-weight: 400; }
+h1, h2, h3 { text-wrap: balance; }
+:focus-visible { outline: 2px solid #B8913F; outline-offset: 3px; }
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ---------- site header ---------- */
+html { scroll-behavior: smooth; }
+body { --ink: #26402F; --soft: #5E7466; --accent: #2C5A3C; --on: #FFFFFF; --gold: #A9843A; --bg: #F6F8F4; --bg2: #EDF2EC; --panel: #FFFFFF; --line: #26402F1F; --nav: #FBFCFAE8; --navink: #26402F; }
+body.invite { --ink: #14305E; --soft: #55658A; --accent: #14305E; --on: #FBF3DC; --gold: #A67C2E; --bg: #FBF7EE; --bg2: #F4EEDF; --line: #14305E1F; --nav: #14305EF2; --navink: #F1DDA6; }
+body { background: var(--bg); color: var(--ink); }
+.nav { position: sticky; top: 0; z-index: 100; height: 56px; padding: 0 clamp(14px, 3vw, 32px); display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--nav); color: var(--navink); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid #26402F14; }
+.mono { font: 500 1.35rem/1 "Cormorant Garamond", serif; color: inherit; text-decoration: none; white-space: nowrap; }
+.mono i { color: var(--gold); } body.invite .mono i { color: inherit; }
+.nav nav { display: flex; align-items: center; gap: clamp(12px, 2.4vw, 30px); }
+.nav nav a { font: 500 .86rem/1 "Jost", sans-serif; color: inherit; text-decoration: none; padding: 10px 0; }
+.nav nav a.cta { background: var(--accent); color: var(--on); padding: 11px 18px; border-radius: 999px; }
+body.invite .nav nav a.cta { background: #F1DDA6; color: #14305E; }
+
+/* ---------- the scene ---------- */
+.sc { position: relative; overflow: hidden; container-type: size; height: max(600px, calc(100svh - 56px));
+  background: linear-gradient(#FCFDFB, #EEF4F0 48%, #E1EBE4); }
+.sc > .layer { position: absolute; inset: 0; pointer-events: none; }
+.wash { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 26% at 18% 22%, #F6E3E2aa, #F6E3E200),
+  radial-gradient(ellipse 34% 22% at 84% 16%, #E2EEEAcc, #E2EEEA00),
+  radial-gradient(ellipse 70% 30% at 50% 88%, #D5E4DA, #D5E4DA00); }
+.grain { position: absolute; inset: 0; z-index: 20; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .36 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.art { position: absolute; }
+.art > i { position: absolute; inset: 0; display: block; background: var(--a) center / contain no-repeat; }
+
+/* the façade: 1500 × 1000, its centre jharokha keeps the window */
+.frame { position: absolute; left: 50%; bottom: 0; height: min(97cqh, 150cqw); aspect-ratio: 1500 / 1000; transform: translateX(-50%); will-change: transform; }
+.frame > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.frame > svg.base { filter: drop-shadow(0 20px 30px #34443826); }
+.frame .art { z-index: 3; }
+.win { position: absolute; left: 37.333%; top: 39%; width: 25.333%; height: 48%; clip-path: url(#cusp); container-type: inline-size; overflow: hidden; background: #F4F2EA; }
+.win .sky { position: absolute; inset: 0; background:
+    radial-gradient(ellipse 80% 45% at 50% 30%, #FFFFFF 0, #FFFFFF00 70%),
+    linear-gradient(#FBF8F1, #F1F0E8 55%, #E4ECE5); }
+.win .taj { position: absolute; left: -6%; right: -6%; bottom: -2%; height: 26%; background: var(--a-taj-gateway) 50% 100% / cover no-repeat; opacity: .16; mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(transparent, #000 45%); mask-image: linear-gradient(transparent, #000 45%); }
+.win .ph { position: absolute; inset: 0; background: var(--a-couple) 52% 62% / cover no-repeat; display: none; }
+.win .ph::before { content: ""; position: absolute; inset: 0 0 auto; height: 50%; background: linear-gradient(#F8F2E9f0, #F8F2E900); }
+.win .ph::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(#F4EFE600, #F4EFE6f2 80%); }
+.copy { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2.6cqi; padding: 24% 6% 14%; color: #2C5A3C; }
+.copy .grp { display: flex; flex-direction: column; align-items: center; gap: 2.4cqi; }
+.copy .inv { font: 400 5.2cqi/1 "Tiro Devanagari Hindi", serif; color: #A9843A; }
+.copy .for { font: italic 400 7cqi/1.2 "Cormorant Garamond", serif; color: #55705E; }
+.copy h1 { font: 500 16cqi/1 "Cormorant Garamond", serif; }
+.copy .amp { display: block; font: italic 400 .55em/1.3 "Cormorant Garamond", serif; color: #A9843A; }
+.copy .dt { font: 500 8cqi/1.2 "Cormorant Garamond", serif; }
+.copy .pl { font: 500 6.2cqi/1.2 "Cormorant Garamond", serif; color: #55705E; }
+.rule { width: 34cqi; height: 5cqi; color: #A9843A; }
+.photo .win .ph { display: block; }
+.photo .win .taj { display: none; }
+.photo .copy { justify-content: space-between; padding: 22% 6% 8%; }
+.photo .copy .for, .photo .copy .rule { display: none; }
+.photo .copy h1 { font-size: 12.5cqi; }
+.photo .copy .amp { display: inline; }
+
+/* lanterns swing from far above */
+.swing { transform-box: view-box; animation: swing var(--d, 4.2s) ease-in-out var(--dl, 0s) infinite alternate; }
+.lamp { position: absolute; top: 0; pointer-events: none; transform-origin: 50% 0; animation: swing var(--d, 5s) ease-in-out var(--dl, 0s) infinite alternate; }
+.lamp svg { display: block; width: 100%; height: 100%; overflow: visible; }
+@keyframes swing { from { transform: rotate(var(--a0, -2.2deg)); } to { transform: rotate(var(--a1, 2.2deg)); } }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .swing, .lamp { animation: none !important; }
+}
+
+/* ---------- garden backdrop: a real watercolour of Amber, misted into the terrace ---------- */
+.back { position: absolute; inset: 0 0 auto; height: 58%; background: var(--bgart, var(--a-amber)) var(--bgpos, 30% 100%) / cover no-repeat; opacity: .88;
+  -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
+.mist { position: absolute; inset: 44% 0 0; background: linear-gradient(#EEF4F000, #EEF4F0d0 34%, #E1EBE4); }
+
+/* ---------- invitation view ---------- */
+.iv { position: relative; overflow: hidden; container-type: size; height: max(720px, calc(100svh - 56px)); background: linear-gradient(#FBF7EE, #F2ECDD); }
+.iv .back { height: 52%; opacity: .92; }
+.iv .arch { position: absolute; left: 50%; bottom: 0; width: max(100cqw, 132cqh); aspect-ratio: 1500 / 1000; transform: translateX(-50%); }
+.iv .arch > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.iv .veil { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 48%, #FBF7EE66, #FBF7EE00); }
+.swags { position: absolute; left: 50%; top: -6px; width: max(100%, 980px); transform: translateX(-50%); z-index: 4; overflow: visible; }
+.bird { position: absolute; bottom: 0; width: min(42cqh, 31cqw); aspect-ratio: 1100 / 1174; z-index: 3; }
+.bird.l { left: max(-1cqw, 50cqw - 760px); } .bird.r { right: max(-1cqw, 50cqw - 760px); transform: scaleX(-1); }
+.bird .art { inset: 0; width: 100%; }
+.plinth { position: absolute; left: 52%; top: 50.5%; bottom: -2%; width: 23%; background: linear-gradient(90deg, #D9CDB6, #FFFDF8 38%, #EDE4D3 70%, #CBBC9F); box-shadow: 0 -5px 0 -1px #F7F1E4, 0 -6px 0 0 #B8924A; }
+.plinth::after { content: ""; position: absolute; inset: 14% 22% 10%; border: 1px solid #B8924A99; }
+.gcard { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; width: min(720px, 88cqw); padding: clamp(36px, 7cqh, 64px) clamp(22px, 5cqw, 64px); text-align: center;
+  background: #FFFCF5F5; border-radius: 22px; box-shadow: 0 24px 60px #14305E2e, 0 0 0 1px #A67C2E40; display: grid; gap: 14px; justify-items: center; }
+.gcard .pre { font: 400 1.05rem/1 "Tiro Devanagari Hindi", serif; color: #A67C2E; }
+.gcard h1 { font: italic 500 clamp(2.4rem, 6.2cqw, 4.1rem)/1.06 "Cormorant Garamond", serif; color: #A67C2E; }
+.gcard .when { font: 500 clamp(1rem, 2.2cqw, 1.2rem)/1.4 "Jost", sans-serif; color: #14305E; }
+.gcard .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+.btn { font: 500 1rem/1 "Jost", sans-serif; border-radius: 999px; padding: 15px 28px; text-decoration: none; border: 1.5px solid var(--accent); cursor: pointer; display: inline-block; }
+.btn.solid { background: var(--accent); color: var(--on); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.gcard .fl { position: absolute; width: clamp(64px, 11cqmin, 104px); aspect-ratio: 1; background: var(--a) center / contain no-repeat; pointer-events: none; }
+.fl.tl { left: -22px; top: -24px; } .fl.tr { right: -22px; top: -24px; } .fl.bl { left: -22px; bottom: -24px; } .fl.br { right: -22px; bottom: -24px; }
+.iv .ground { z-index: 4; }
+
+/* three facts under the invitation */
+.cards { display: none; }
+body.invite .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 1120px; margin: -44px auto 0; padding: 0 clamp(16px, 3vw, 24px); position: relative; z-index: 6; }
+.fact { background: var(--panel); border-radius: 20px; box-shadow: 0 10px 34px #14305E17, 0 0 0 1px var(--line); padding: 26px 22px; text-align: center; display: grid; gap: 8px; justify-items: center; align-content: start; }
+.fact img { width: 44px; height: 38px; object-fit: contain; }
+.fact h3 { font: 500 1.9rem/1.05 "Cormorant Garamond", serif; }
+.fact p { font: 400 1rem/1.45 "Jost", sans-serif; }
+.fact a { color: inherit; }
+.count { display: grid; grid-template-columns: repeat(4, minmax(0, 58px)); gap: 7px; margin-top: 4px; }
+.count div { background: #14305E; color: #FBF3DC; border-radius: 10px; padding: 10px 2px 8px; font: 500 1.5rem/1 "Cormorant Garamond", serif; font-variant-numeric: tabular-nums lining-nums; }
+.count small { display: block; font: 500 .62rem/1 "Jost", sans-serif; letter-spacing: .06em; margin-top: 5px; color: #F1DDA6; }
+
+/* ---------- sections ---------- */
+.sec { padding: clamp(64px, 9vw, 120px) clamp(16px, 5vw, 64px); scroll-margin-top: 56px; position: relative; overflow: hidden; }
+.sec.alt { background: var(--bg2); }
+.in { max-width: 1120px; margin: 0 auto; }
+.sec h2 { font: 500 clamp(2.5rem, 5.4vw, 4.2rem)/1.03 "Cormorant Garamond", serif; }
+.sec .lede { font: 400 clamp(1.05rem, 1.6vw, 1.2rem)/1.55 "Jost", sans-serif; color: var(--soft); max-width: 56ch; margin-top: 12px; }
+.corner { position: absolute; width: clamp(130px, 20vw, 290px); aspect-ratio: 1100 / 1668; background: var(--a-jasmine) center / contain no-repeat; pointer-events: none; right: -3%; top: -6%; transform: scaleY(-1); opacity: .95; }
+
+/* a day per row: the date, the meaning, what to wear and where */
+.days { margin-top: clamp(32px, 5vw, 56px); display: grid; }
+.day { display: grid; grid-template-columns: 112px minmax(0, 1fr) 150px; column-gap: clamp(18px, 3vw, 40px); padding: clamp(24px, 3.4vw, 38px) 0; border-top: 1px solid var(--line); align-items: start; }
+.day .d { font: 500 clamp(3.6rem, 6vw, 5rem)/.9 "Cormorant Garamond", serif; font-variant-numeric: lining-nums; color: var(--accent); }
+.day .d small { display: block; font: 500 .78rem/1.3 "Jost", sans-serif; color: var(--soft); margin-bottom: 8px; }
+.day h3 { font: 500 clamp(2rem, 3.2vw, 2.7rem)/1.05 "Cormorant Garamond", serif; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.day h3 span { font: 400 1.05rem/1 "Tiro Devanagari Hindi", serif; color: var(--gold); }
+.day .m { font: 400 1.06rem/1.55 "Jost", sans-serif; margin-top: 10px; max-width: 58ch; }
+.info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; margin-top: 18px; }
+.info h4 { margin: 0 0 6px; font: 500 .78rem/1.2 "Jost", sans-serif; color: var(--soft); }
+.info p { font: 400 1rem/1.45 "Jost", sans-serif; }
+.info a { color: var(--accent); text-underline-offset: 3px; }
+.sw { display: flex; gap: 6px; margin-bottom: 8px; }
+.sw i { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px #0000001a; }
+.day .pic { height: 150px; background: var(--a) center / contain no-repeat; }
+
+/* venues */
+.vgrid { margin-top: clamp(28px, 4vw, 48px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.vn { background: var(--panel); border-radius: 20px; padding: 26px; box-shadow: 0 0 0 1px var(--line); display: grid; gap: 8px; align-content: start; }
+.vn .t { display: flex; flex-wrap: wrap; gap: 6px; }
+.vn .t b { font: 500 .8rem/1 "Jost", sans-serif; background: var(--bg2); padding: 7px 11px; border-radius: 999px; }
+.vn h3 { font: 500 1.9rem/1.1 "Cormorant Garamond", serif; margin-top: 6px; }
+.vn p { font: 400 1.02rem/1.5 "Jost", sans-serif; }
+.vn .note { color: var(--soft); font-size: .92rem; }
+.vn a { font: 500 .95rem/1 "Jost", sans-serif; color: var(--accent); margin-top: 6px; text-underline-offset: 3px; padding: 6px 0; }
+
+/* photo */
+.ph2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 6vw, 80px); align-items: center; }
+.ph2 img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 52% 62%; border-radius: 220px 220px 20px 20px; display: block; }
+
+/* rsvp */
+.rs { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: clamp(28px, 6vw, 80px); align-items: start; }
+form { background: var(--panel); border-radius: 22px; padding: clamp(20px, 3vw, 34px); box-shadow: 0 0 0 1px var(--line); display: grid; gap: 18px; }
+label, legend { font: 500 .9rem/1.2 "Jost", sans-serif; display: grid; gap: 7px; padding: 0; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+input[type=text], input[type=email], input[type=number], textarea { font: 400 1rem/1.3 "Jost", sans-serif; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 13px 14px; width: 100%; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.pills label { display: block; cursor: pointer; }
+.pills input { position: absolute; opacity: 0; }
+.pills span { display: block; font: 400 .95rem/1 "Jost", sans-serif; border: 1px solid var(--line); border-radius: 999px; padding: 12px 15px; }
+.pills input:checked + span { background: var(--accent); color: var(--on); border-color: var(--accent); }
+.pills input:focus-visible + span { outline: 2px solid #B8913F; outline-offset: 2px; }
+.two { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+form .btn { justify-self: start; }
+.ok { font: 400 1rem/1.45 "Jost", sans-serif; color: var(--accent); }
+
+footer { background: var(--bg2); color: var(--soft); font: 400 .8rem/1.6 "Jost", sans-serif; padding: 32px 16px 48px; }
+footer > div { max-width: 1120px; margin: 0 auto; }
+footer a { color: inherit; }
+
+@media (max-width: 820px) {
+  body.invite .cards { grid-template-columns: 1fr; margin-top: 16px; }
+  .day { grid-template-columns: 76px minmax(0, 1fr); column-gap: 14px; }
+  .day .d { font-size: 3.2rem; }
+  .day .pic { display: none; }
+  .info, .vgrid, .ph2, .rs { grid-template-columns: 1fr; }
+  .day .body { min-width: 0; }
+  .gcard { top: 12cqh; transform: translateX(-50%); }
+  .iv { height: 700px; }
+  .bird { width: 44cqw; }
+  .bird.l { left: -7cqw; } .bird.r { right: -7cqw; }
+}
+@media (max-width: 480px) { .hide-s { display: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ---------- open garden ---------- */
+.og .back { height: 74%; opacity: .95; }
+.og .mist { inset: 50% 0 0; }
+.og .veil { position: absolute; inset: 0; background: radial-gradient(ellipse 46% 40% at 50% 40%, #F7F8F2f2 30%, #F7F8F200); }
+.og-t { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 6; width: min(860px, 92cqw); text-align: center; display: grid; justify-items: center; gap: 12px; color: #26402F; }
+.og-t .pre { font: 400 1.05rem/1 "Tiro Devanagari Hindi", serif; color: #A67C2E; }
+.og-t h1 { font: 500 clamp(3.3rem, 11cqmin, 7.4rem)/1 "Cormorant Garamond", serif; }
+.og-t h1 i { color: #A67C2E; font-weight: 400; }
+.og-t .when { font: 500 clamp(1.02rem, 2.4cqmin, 1.3rem)/1.4 "Jost", sans-serif; margin-top: 8px; }
+.og-t .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+@media (max-width: 820px) { .og-t { top: 17cqh; transform: translateX(-50%); gap: 8px; } .og-t h1 { font-size: 2.95rem; } .og .back { background-position: 78% 40%; } .og .veil { background: radial-gradient(ellipse 80% 30% at 50% 26%, #F7F8F2f2 40%, #F7F8F200); } }
+
+body[data-bg="rockies"] { --bgart: var(--a-rockies); --bgpos: 62% 60%; }
+body[data-bg="rockies2"] { --bgart: var(--a-rockies2); --bgpos: 30% 40%; }
+html { overflow-x: clip; }
+
+/* phones: keep the paintings, drop the effects that cost the most memory */
+@media (max-width: 820px) {
+  .art { filter: none !important; }
+  .grain { display: none; }
+  .og .far { display: none; }
+  .frame { will-change: auto; }
+  .frame > svg.base, g[filter="url(#stone)"] { filter: none !important; }
+  .nav { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+</style>
+</head>
+<body>
+
+<svg class="defs" aria-hidden="true">
+  <defs>
+    <clipPath id="cusp" clipPathUnits="objectBoundingBox"><path id="cuspPath" d="M0 1 L0 .4 Q0 0 .5 0 Q1 0 1 .4 L1 1Z"/></clipPath>
+    <!-- marble: long faint veins and a fine grain, kept inside the stone -->
+    <filter id="stone" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".0035 .016" numOctaves="4" seed="11" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 .62  0 0 0 0 .6  0 0 0 0 .56  -2.6 0 0 0 .92" result="v"/>
+      <feComposite in="v" in2="SourceAlpha" operator="in" result="vv"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="3" seed="4" result="c"/>
+      <feColorMatrix in="c" type="matrix" values="0 0 0 0 .8  0 0 0 0 .74  0 0 0 0 .64  0 0 0 .22 -.08" result="cl"/>
+      <feComposite in="cl" in2="SourceAlpha" operator="in" result="ccl"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="ccl"/><feMergeNode in="vv"/></feMerge>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <linearGradient id="marble" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".55" stop-color="#F5EFE3"/><stop offset="1" stop-color="#E6DBC7"/></linearGradient>
+    <linearGradient id="marbleW" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#F8F5EE"/><stop offset=".6" stop-color="#ECE5D7"/><stop offset="1" stop-color="#DCD1BD"/></linearGradient>
+    <linearGradient id="col" x1="0" x2="1"><stop offset="0" stop-color="#D9CDB6"/><stop offset=".35" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#EDE4D3"/><stop offset="1" stop-color="#CBBC9F"/></linearGradient>
+    <linearGradient id="gold" x1="0" x2="1"><stop offset="0" stop-color="#8A6A2E"/><stop offset=".38" stop-color="#ECD48F"/><stop offset=".65" stop-color="#C69C4C"/><stop offset="1" stop-color="#7A5A26"/></linearGradient>
+    <linearGradient id="goldV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0DA98"/><stop offset=".5" stop-color="#C79D4D"/><stop offset="1" stop-color="#86652B"/></linearGradient>
+    <linearGradient id="slab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFEFA"/><stop offset="1" stop-color="#EEE6D6"/></linearGradient>
+    <linearGradient id="under" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9AA8E"/><stop offset="1" stop-color="#D9CEB9" stop-opacity="0"/></linearGradient>
+    <radialGradient id="dome" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFC"/><stop offset=".55" stop-color="#F1EADC"/><stop offset="1" stop-color="#D2C4A8"/></radialGradient>
+    <linearGradient id="skyW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F8F3"/><stop offset="1" stop-color="#DCE8E1"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#FFF6D8"/><stop offset=".55" stop-color="#F8D78C"/><stop offset="1" stop-color="#E9AE55"/></radialGradient>
+    <radialGradient id="halo"><stop offset="0" stop-color="#FFE3A0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE3A0" stop-opacity="0"/></radialGradient>
+    <!-- pietra dura: a running vine of tiny inlaid flowers -->
+    <pattern id="inlay" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M0 13 C6 7 9 19 13 13 S20 7 26 13" fill="none" stroke="#7E9C82" stroke-width=".9"/>
+      <g transform="translate(13 13)"><ellipse rx="2.3" ry="4.4" cy="-3.6" fill="#C8737A"/><ellipse rx="2.3" ry="4.4" cy="3.6" fill="#C8737A"/><ellipse rx="4.4" ry="2.3" cx="-3.6" fill="#D58E92"/><ellipse rx="4.4" ry="2.3" cx="3.6" fill="#D58E92"/><circle r="1.8" fill="#C9A35A"/></g>
+      <ellipse cx="4" cy="8" rx="3.4" ry="1.4" transform="rotate(-35 4 8)" fill="#5E8C6A"/><ellipse cx="22" cy="18" rx="3.4" ry="1.4" transform="rotate(-35 22 18)" fill="#5E8C6A"/>
+    </pattern>
+    <!-- jaali: an eight-point star lattice cut in marble -->
+    <pattern id="jaali" width="30" height="30" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#F3EDE1" stroke-width="3.2">
+        <path d="M15 0 L22 8 L30 15 L22 22 L15 30 L8 22 L0 15 L8 8Z"/><rect x="8" y="8" width="14" height="14"/><path d="M0 0 L8 8 M30 0 L22 8 M0 30 L8 22 M30 30 L22 22"/>
+      </g>
+      <g fill="none" stroke="#C8BBA1" stroke-width=".7" transform="translate(.8 1)">
+        <path d="M15 0 L22 8 L30 15 L22 22 L15 30 L8 22 L0 15 L8 8Z"/><rect x="8" y="8" width="14" height="14"/>
+      </g>
+    </pattern>
+    <pattern id="holes" width="7" height="8" patternUnits="userSpaceOnUse"><rect width="7" height="8" fill="#fff"/><path d="M3.5 1.2 L5 4 L3.5 6.8 L2 4Z" fill="#000"/></pattern>
+    <mask id="fret" maskContentUnits="userSpaceOnUse"><rect x="-60" y="-60" width="120" height="320" fill="url(#holes)"/></mask>
+    <symbol id="lrule" viewBox="0 0 160 24"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M0 14 H58 M102 14 H160"/><path d="M80 20 C72 14 72 8 80 2 C88 8 88 14 80 20Z"/><path d="M80 20 C72 20 66 16 63 10 C70 10 76 13 80 20Z M80 20 C88 20 94 16 97 10 C90 10 84 13 80 20Z"/></g></symbol>
+    <symbol id="mgy" viewBox="0 0 150 113" overflow="visible"><image href="art/m/mg-y.webp" width="150" height="113"/></symbol>
+    <symbol id="lh" viewBox="0 0 240 206" overflow="visible"><image href="art/m/lotus-head.webp" width="240" height="206"/></symbol>
+    <symbol id="mgo" viewBox="0 0 150 113" overflow="visible"><image href="art/m/mg-o.webp" width="150" height="113"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <a class="mono" href="#home" data-go="home">V <i>&amp;</i> J</a>
+  <nav aria-label="Main">
+    <a href="#events" data-go="events">Events</a><a href="#venues" data-go="venues">Venues</a><a class="hide-s" href="#photos" data-go="photos">Photos</a><a class="cta" href="#rsvp" data-go="rsvp">RSVP</a>
+  </nav>
+</header>
+
+<main id="page">
+  <div id="home"></div>
+  <section class="cards" id="cards"></section>
+  <section class="sec" id="events"></section>
+  <section class="sec alt" id="venues"></section>
+  <section class="sec" id="photos"></section>
+  <section class="sec alt" id="rsvp"></section>
+</main>
+
+<footer><div><b style="color:#26402F">Paintings</b> · <a href="https://commons.wikimedia.org/wiki/File:Pavo_Cristafus-_Common_Pea_Fowl._64.98.209.jpg">Common Pea Fowl</a>, Daniel Giraud Elliott · <a href="https://commons.wikimedia.org/wiki/File:Nelumbo_nucifera_Blanco1.158.png">Nelumbo nucifera</a>, Francisco Manuel Blanco · <a href="https://commons.wikimedia.org/wiki/File:Jasminum_auriculatum_by_Robert_Sweet_-_The_Botanical_register_(1815)_(14586635477).jpg">Jasminum auriculatum</a>, Sydenham Edwards, The Botanical Register · <a href="https://commons.wikimedia.org/wiki/File:Kadam_-_Bhawani_Das_-_9_1927_2_28.jpg">Kadam</a>, Bhawani Das · <a href="https://commons.wikimedia.org/wiki/File:Gateway_to_the_Taj_Mahal,_Agra,_Uttar_Pradesh.jpg">Gateway to the Taj Mahal</a>, Thomas Daniell · <a href="https://commons.wikimedia.org/wiki/File:Redoute_-_Rosa_centifolia_foliacea.jpg">Rosa centifolia foliacea</a>, Pierre-Joseph Redouté · <a href="https://commons.wikimedia.org/wiki/File:Redoute_-_Rosa_gallica_pontiana.jpg">Rosa gallica pontiana</a>, Pierre-Joseph Redouté · <a href="https://commons.wikimedia.org/wiki/File:Tagetes_erecta001.png">African marigold</a>, Oceancetaceen - Alice Chodura · <a href="https://commons.wikimedia.org/wiki/File:Musa_paradisiaca_Blanco1.88.png">Musa paradisiaca</a>, Francisco Manuel Blanco (O.S.A.) · <a href="https://commons.wikimedia.org/wiki/File:The_Botanical_Magazine,_Plate_279_(Volume_8,_1794).png">Plumeria, The Botanical Magazine pl. 279</a>, William Curtis · <a href="https://commons.wikimedia.org/wiki/File:William_Clarkson_Stanfield_-_Amber,_Rajpootana_V%26A_2023NP6223.jpg">Amber, Rajpootana</a>, Clarkson Frederick Stanfield · <a href="https://commons.wikimedia.org/wiki/File:Frederic_M._Bell-Smith_-_Mists_and_Glaciers_of_the_Selkirks.jpg">Mists and Glaciers of the Selkirks</a>, Frederic Marlett Bell-Smith · <a href="https://commons.wikimedia.org/wiki/File:A_Mountain_Trail,_1887.jpg">A Mountain Trail</a>, Lucius Richard O&#x27;Brien. All public domain, via Wikimedia Commons. Engagement photograph courtesy of the couple.</div></footer>
+
+<template id="win-tpl">
+  <div class="win">
+    <div class="sky"></div><div class="taj"></div>
+    <div class="ph" role="img" aria-label="Jasneal and Vanya walking hand in hand along a beach at dusk"></div>
+    <div class="copy">
+      <div class="grp">
+        <p class="inv">॥ श्री गणेशाय नमः ॥</p>
+        <p class="for">For the wedding of</p>
+        <h1>Vanya <span class="amp">&amp;</span> Jasneal</h1>
+      </div>
+      <div class="grp">
+        <svg class="rule" aria-hidden="true"><use href="#lrule"/></svg>
+        <p class="dt">July 6–10, 2027</p>
+        <p class="pl">Calgary, Alberta</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+var ASP = {"peacock": [1100, 1174], "lotus": [1200, 832], "jasmine": [1100, 1668], "kadam": [1100, 1116], "taj-gateway": [1200, 920], "couple": [1300, 1950], "rose": [1100, 1391], "rose-red": [1000, 1275], "marigold": [1000, 1287], "banana": [1300, 913], "plumeria": [1000, 1536], "amber": [1920, 794], "rockies": [1800, 879], "rockies2": [1800, 765], "peacock-solo": [1100, 1174], "lotus-head": [240, 206], "rose-head": [340, 298]};
+function f(n) { return +n.toFixed(1); }
+
+/* ---------- the cusped arch: a pointed arch with seven lobes a side ---------- */
+var CP = [[0, .42], [.02, .3], [.08, .2], [.17, .12], [.28, .065], [.39, .03], [.5, 0]];
+var CPS = CP.concat(CP.slice(0, -1).reverse().map(function (p) { return [1 - p[0], p[1]]; }));
+function cusp(x, y, w, h, close) {
+  var d = 'M' + x + ' ' + (y + h) + ' L' + f(x + CPS[0][0] * w) + ' ' + f(y + CPS[0][1] * h);
+  for (var i = 1; i < CPS.length; i++) {
+    var a = CPS[i - 1], b = CPS[i], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), k = L * .32;
+    d += ' Q' + f(x + (mx + dy / L * k) * w) + ' ' + f(y + (my - dx / L * k) * h) + ' ' + f(x + b[0] * w) + ' ' + f(y + b[1] * h);
+  }
+  return d + ' L' + (x + w) + ' ' + (y + h) + (close ? ' Z' : '');
+}
+/* a smooth pointed arch (no lobes), for the outer mouldings */
+function parch(x, y, w, h) {
+  var c = x + w / 2, s = y + h * .42;
+  return 'M' + x + ' ' + (y + h) + ' L' + x + ' ' + f(s) + ' C' + x + ' ' + f(y + h * .12) + ' ' + f(c - w * .22) + ' ' + f(y + h * .03) + ' ' + c + ' ' + y +
+    ' C' + f(c + w * .22) + ' ' + f(y + h * .03) + ' ' + (x + w) + ' ' + f(y + h * .12) + ' ' + (x + w) + ' ' + f(s) + ' L' + (x + w) + ' ' + (y + h);
+}
+document.getElementById('cuspPath').setAttribute('d', cusp(0, 0, 1, 1, true));
+
+/* ---------- architectural pieces (all in façade units) ---------- */
+var LN = '#CDBFA3', CV = '#B9A887', GD = '#B8924A';
+function rect(x, y, w, h, fill, extra) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + fill + '"' + (extra || '') + '/>'; }
+function path(d, fill, extra) { return '<path d="' + d + '" fill="' + fill + '"' + (extra || '') + '/>'; }
+
+/* chhajja: the thin sloping eave, with its shadow and brackets */
+function chhajja(x0, x1, y, n) {
+  var s = path('M' + (x0 + 16) + ' ' + y + ' H' + (x1 - 16) + ' L' + x1 + ' ' + (y + 13) + ' H' + x0 + 'Z', 'url(#slab)', ' stroke="' + LN + '" stroke-width="1"') +
+    rect(x0, y + 13, x1 - x0, 7, '#E7DECD', ' stroke="' + LN + '" stroke-width=".8"') +
+    rect(x0 + 2, y + 15.5, x1 - x0 - 4, 1, GD, ' opacity=".8"') +
+    path('M' + x0 + ' ' + (y + 20) + ' H' + x1 + ' L' + (x1 - 12) + ' ' + (y + 34) + ' H' + (x0 + 12) + 'Z', 'url(#under)', ' opacity=".8"');
+  for (var i = 0; i < n; i++) {
+    var bx = x0 + 24 + i * (x1 - x0 - 48) / (n - 1);
+    s += path('M' + (bx - 7) + ' ' + (y + 20) + ' h14 c0 10 -4 12 -3 22 c-2 3 -6 3 -8 0 c1 -10 -3 -12 -3 -22Z', 'url(#col)', ' stroke="' + CV + '" stroke-width=".7"');
+  }
+  return s;
+}
+/* kanguras: the row of leaf-shaped merlons along a parapet */
+function kanguras(x0, x1, y, h) {
+  var s = rect(x0, y - 5, x1 - x0, 5, '#EFE8DA', ' stroke="' + LN + '" stroke-width=".8"'), n = Math.round((x1 - x0) / (h * .95)), w = (x1 - x0) / n;
+  for (var i = 0; i < n; i++) {
+    var cx = x0 + w * (i + .5);
+    s += path('M' + f(cx - w * .42) + ' ' + (y - 5) + ' C' + f(cx - w * .46) + ' ' + f(y - h * .55) + ' ' + f(cx - w * .12) + ' ' + f(y - h * .7) + ' ' + f(cx) + ' ' + f(y - h) +
+      ' C' + f(cx + w * .12) + ' ' + f(y - h * .7) + ' ' + f(cx + w * .46) + ' ' + f(y - h * .55) + ' ' + f(cx + w * .42) + ' ' + (y - 5) + 'Z', 'url(#marble)', ' stroke="' + CV + '" stroke-width=".8"') +
+      '<circle cx="' + f(cx) + '" cy="' + f(y - h * .42) + '" r="' + f(h * .09) + '" fill="' + GD + '" opacity=".75"/>';
+  }
+  return s;
+}
+/* onion dome on a lotus ring, with a gilt kalash finial */
+function dome(cx, base, w, h) {
+  var r = w / 2, t = base - h;
+  var d = 'M' + f(cx - r * .78) + ' ' + base + ' C' + f(cx - r * 1.08) + ' ' + f(base - h * .3) + ' ' + f(cx - r * 1.02) + ' ' + f(base - h * .78) + ' ' + f(cx - r * .3) + ' ' + f(t + h * .1) +
+    ' Q' + f(cx) + ' ' + f(t + h * .02) + ' ' + cx + ' ' + t + ' Q' + f(cx) + ' ' + f(t + h * .02) + ' ' + f(cx + r * .3) + ' ' + f(t + h * .1) +
+    ' C' + f(cx + r * 1.02) + ' ' + f(base - h * .78) + ' ' + f(cx + r * 1.08) + ' ' + f(base - h * .3) + ' ' + f(cx + r * .78) + ' ' + base + 'Z';
+  var s = path(d, 'url(#dome)', ' stroke="' + CV + '" stroke-width="1"');
+  for (var k = -2; k <= 2; k++) if (k) s += path('M' + f(cx + k * r * .32) + ' ' + base + ' Q' + f(cx + k * r * .42) + ' ' + f(base - h * .6) + ' ' + cx + ' ' + f(t + h * .06), 'none', ' stroke="' + LN + '" stroke-width=".9" opacity=".8"');
+  var n = Math.round(w / 14), pw = r * 1.6 / n;
+  for (var i = 0; i < n; i++) { var px = cx - r * .8 + pw * (i + .5); s += path('M' + f(px - pw * .55) + ' ' + base + ' Q' + f(px) + ' ' + f(base - h * .2) + ' ' + f(px + pw * .55) + ' ' + base + 'Z', '#F7F2E7', ' stroke="' + CV + '" stroke-width=".7"'); }
+  var k0 = t, kh = h * .42;
+  s += path('M' + cx + ' ' + f(k0 - kh) + ' V' + k0, 'none', ' stroke="url(#gold)" stroke-width="' + f(w * .02 + 1) + '"') +
+    '<ellipse cx="' + cx + '" cy="' + f(k0 - kh * .3) + '" rx="' + f(w * .05) + '" ry="' + f(w * .04) + '" fill="url(#gold)"/>' +
+    '<ellipse cx="' + cx + '" cy="' + f(k0 - kh * .62) + '" rx="' + f(w * .035) + '" ry="' + f(w * .03) + '" fill="url(#gold)"/>' +
+    path('M' + f(cx - w * .03) + ' ' + f(k0 - kh * .85) + ' Q' + cx + ' ' + f(k0 - kh * 1.15) + ' ' + f(cx + w * .03) + ' ' + f(k0 - kh * .85) + 'Z', 'url(#gold)');
+  return s;
+}
+/* a turned colonnette with a vase base and lotus capital */
+function column(x, y0, y1, w) {
+  var c = x + w / 2;
+  return rect(x, y0 + 18, w, y1 - y0 - 40, 'url(#col)') +
+    path('M' + (x - 4) + ' ' + (y0 + 18) + ' Q' + c + ' ' + (y0 - 4) + ' ' + (x + w + 4) + ' ' + (y0 + 18) + 'Z', 'url(#col)', ' stroke="' + CV + '" stroke-width=".7"') +
+    rect(x - 5, y0 + 16, w + 10, 4, 'url(#gold)') +
+    path('M' + (x - 2) + ' ' + (y1 - 22) + ' C' + (x - 9) + ' ' + (y1 - 12) + ' ' + (x - 6) + ' ' + (y1 - 4) + ' ' + (x - 6) + ' ' + y1 + ' H' + (x + w + 6) + ' C' + (x + w + 6) + ' ' + (y1 - 4) + ' ' + (x + w + 9) + ' ' + (y1 - 12) + ' ' + (x + w + 2) + ' ' + (y1 - 22) + 'Z', 'url(#col)', ' stroke="' + CV + '" stroke-width=".7"') +
+    rect(x - 2, y1 - 24, w + 4, 3, 'url(#gold)');
+}
+/* inlaid rosette with a scroll of leaves either side */
+function rosette(cx, cy, r) {
+  var s = '<circle cx="' + cx + '" cy="' + cy + '" r="' + f(r * 1.12) + '" fill="#FBF8F1" stroke="' + GD + '" stroke-width="1"/>';
+  for (var i = 0; i < 8; i++) {
+    var a = i * 45;
+    s += '<ellipse cx="' + cx + '" cy="' + f(cy - r * .55) + '" rx="' + f(r * .22) + '" ry="' + f(r * .42) + '" fill="#C8737A" opacity=".88" transform="rotate(' + a + ' ' + cx + ' ' + cy + ')"/>' +
+      '<ellipse cx="' + cx + '" cy="' + f(cy - r * .78) + '" rx="' + f(r * .1) + '" ry="' + f(r * .22) + '" fill="#5E8C6A" transform="rotate(' + (a + 22.5) + ' ' + cx + ' ' + cy + ')"/>';
+  }
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + f(r * .26) + '" fill="url(#gold)"/>';
+  [-1, 1].forEach(function (sx) {
+    var x1 = cx + sx * r * 1.1, x2 = cx + sx * r * 2.6;
+    s += path('M' + f(x1) + ' ' + cy + ' C' + f(cx + sx * r * 1.7) + ' ' + f(cy - r * .9) + ' ' + f(cx + sx * r * 2.3) + ' ' + f(cy + r * .5) + ' ' + f(x2) + ' ' + f(cy - r * .2), 'none', ' stroke="#6E9474" stroke-width="1.1"');
+    [[1.6, -.42, -30], [2.05, .1, 30], [2.55, -.35, -20]].forEach(function (l) {
+      s += '<ellipse cx="' + f(cx + sx * r * l[0]) + '" cy="' + f(cy + r * l[1]) + '" rx="' + f(r * .26) + '" ry="' + f(r * .1) + '" fill="#5E8C6A" transform="rotate(' + (sx * l[2]) + ' ' + f(cx + sx * r * l[0]) + ' ' + f(cy + r * l[1]) + ')"/>';
+    });
+    s += '<circle cx="' + f(x2) + '" cy="' + f(cy - r * .2) + '" r="' + f(r * .14) + '" fill="#C8737A"/>';
+  });
+  return s;
+}
+/* framed arch: an inlaid border, carved spandrels with rosettes, cusped opening, mouldings */
+function pishtaq(x, y, w, h, band, op, rose) {
+  var ix = x + band, iy = y + band, iw = w - 2 * band;
+  var s = path('M' + x + ' ' + y + ' h' + w + ' v' + h + ' h-' + w + 'Z M' + ix + ' ' + iy + ' v' + (h - band) + ' h' + iw + ' v-' + (h - band) + 'Z', 'url(#inlay)', ' fill-rule="evenodd" opacity=".9"') +
+    rect(x, y, w, h, 'none', ' stroke="' + CV + '" stroke-width="1.2"') + rect(ix, iy, iw, h - band, 'none', ' stroke="' + CV + '" stroke-width="1.2"') +
+    rect(x + 3, y + 3, w - 6, h - 3, 'none', ' stroke="' + GD + '" stroke-width=".8" opacity=".7"');
+  if (rose) s += rosette(ix + iw * .13, iy + 32, rose) + rosette(ix + iw * .87, iy + 32, rose);
+  var o = op;                                   // opening [x,y,w,h]
+  s += path(parch(o[0] - 16, o[1] - 14, o[2] + 32, o[3] + 14), 'none', ' stroke="' + CV + '" stroke-width="1.2"') +
+    path(parch(o[0] - 10, o[1] - 8, o[2] + 20, o[3] + 8), 'none', ' stroke="' + GD + '" stroke-width="1.4"') +
+    path(cusp(o[0] - 5, o[1] - 4, o[2] + 10, o[3] + 4, false), 'none', ' stroke="' + LN + '" stroke-width="1"');
+  return s;
+}
+/* a jaali screen inside an opening */
+function jaali(o, id) {
+  var d = cusp(o[0], o[1], o[2], o[3], true);
+  return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath>' + path(d, 'url(#skyW)') +
+    '<g clip-path="url(#' + id + ')">' + rect(o[0], o[1], o[2], o[3], 'url(#jaali)') + path(d, 'none', ' stroke="#6E6250" stroke-opacity=".35" stroke-width="26" filter="url(#soft)"') + '</g>';
+}
+/* turned balusters along the terrace */
+function balustrade(x0, x1, y0, y1) {
+  var s = rect(x0, y1 - 14, x1 - x0, 14, 'url(#slab)', ' stroke="' + LN + '"');
+  for (var x = x0 + 14; x < x1 - 8; x += 24) {
+    var t = y0 + 16, b = y1 - 14, c = x;
+    s += path('M' + (c - 4) + ' ' + t + ' C' + (c - 4) + ' ' + (t + 10) + ' ' + (c - 10) + ' ' + f(t + (b - t) * .45) + ' ' + (c - 9) + ' ' + f(t + (b - t) * .62) + ' C' + (c - 8) + ' ' + f(b - 8) + ' ' + (c - 6) + ' ' + (b - 4) + ' ' + (c - 7) + ' ' + b +
+      ' H' + (c + 7) + ' C' + (c + 6) + ' ' + (b - 4) + ' ' + (c + 8) + ' ' + f(b - 8) + ' ' + (c + 9) + ' ' + f(t + (b - t) * .62) + ' C' + (c + 10) + ' ' + f(t + (b - t) * .45) + ' ' + (c + 4) + ' ' + (t + 10) + ' ' + (c + 4) + ' ' + t + 'Z', 'url(#col)', ' stroke="' + CV + '" stroke-width=".7"');
+  }
+  s += rect(x0 - 6, y0, x1 - x0 + 12, 16, 'url(#slab)', ' stroke="' + LN + '"') + rect(x0 - 6, y0 + 12, x1 - x0 + 12, 4, '#DDD2BE') + rect(x0 - 6, y0 + 3, x1 - x0 + 12, 1.2, GD, ' opacity=".8"');
+  return s;
+}
+function post(x, y0, y1) {
+  return rect(x - 18, y0, 36, y1 - y0, 'url(#col)', ' stroke="' + CV + '"') + rect(x - 24, y0 - 8, 48, 12, 'url(#slab)', ' stroke="' + LN + '"') +
+    rect(x - 10, y0 + 14, 20, y1 - y0 - 28, 'url(#inlay)', ' opacity=".8"') +
+    path('M' + (x - 13) + ' ' + (y0 - 8) + ' Q' + x + ' ' + (y0 - 34) + ' ' + (x + 13) + ' ' + (y0 - 8) + 'Z', 'url(#dome)', ' stroke="' + CV + '"') + '<circle cx="' + x + '" cy="' + (y0 - 34) + '" r="3" fill="url(#gold)"/>';
+}
+/* chhatri: an open domed pavilion on four slender pillars */
+function chhatri(cx, base, w) {
+  var s = rect(cx - w * .55, base - 14, w * 1.1, 14, 'url(#slab)', ' stroke="' + LN + '"'), top = base - w * .55;
+  [-.42, 0, .42].forEach(function (k) { s += rect(f(cx + k * w - 5), top, 10, base - 14 - top, 'url(#col)', ' stroke="' + CV + '" stroke-width=".6"'); });
+  [-.21, .21].forEach(function (k) { s += path(cusp(f(cx + k * w - w * .17), f(top + 10), f(w * .34), f(base - 24 - top), false), 'none', ' stroke="' + CV + '" stroke-width="1"'); });
+  s += chhajja(cx - w * .62, cx + w * .62, top - 16, 4) + dome(cx, top - 16, w * .82, w * .66);
+  return s;
+}
+/* a slender corner minaret */
+function minaret(cx, top, bottom, w) {
+  var s = rect(cx - w / 2, top, w, bottom - top, 'url(#col)', ' stroke="' + CV + '"');
+  for (var y = top + 60; y < bottom - 40; y += 110) s += rect(cx - w / 2 - 4, y, w + 8, 8, 'url(#slab)', ' stroke="' + LN + '" stroke-width=".7"') + rect(cx - w / 2 - 4, y + 8, w + 8, 2, GD, ' opacity=".7"');
+  s += rect(cx - w / 2 + 6, top + 14, w - 12, bottom - top - 28, 'url(#inlay)', ' opacity=".55"');
+  s += chhajja(cx - w * .95, cx + w * .95, top - 12, 3) + dome(cx, top - 12, w * 1.15, w * 1.1);
+  return s;
+}
+
+/* ---------- the brass lantern (pivot at its hook; drawn hanging downward) ---------- */
+function lantern(chain, sc, id) {
+  var s = '';
+  for (var y = 0; y < chain; y += 9) s += (y / 9) % 2 ? rect(-1, y, 2, 10, '#9C7A3C') : '<ellipse cx="0" cy="' + (y + 5) + '" rx="3" ry="5.4" fill="none" stroke="url(#gold)" stroke-width="1.8"/>';
+  var g = '<circle cy="96" r="80" fill="url(#halo)"/>' +
+    '<circle cy="4" r="4.2" fill="none" stroke="url(#gold)" stroke-width="2"/><circle cy="12" r="3.6" fill="url(#gold)"/>' +
+    path('M-24 42 C-24 24 -8 16 0 14 C8 16 24 24 24 42Z', 'url(#gold)') + path('M-12 40 C-12 28 -4 22 0 20', 'none', ' stroke="#F7E6B2" stroke-width="1.4" opacity=".7"') +
+    rect(-28, 42, 56, 7, 'url(#goldV)') +
+    path('M-25 49 L25 49 L32 100 L21 152 L-21 152 L-32 100Z', 'url(#glow)') +
+    '<g mask="url(#fret)">' + path('M-25 49 L25 49 L32 100 L21 152 L-21 152 L-32 100Z', 'url(#gold)') + '</g>' +
+    path('M-25 49 L-32 100 L-21 152 L-9 152 L-11 100 L-9 49Z', '#2A1E0C', ' opacity=".18"') +
+    path('M-25 49 L-32 100 L-21 152 M25 49 L32 100 L21 152 M-9 49 L-11 100 L-9 152 M9 49 L11 100 L9 152 M-32 100 H32', 'none', ' stroke="#7E5E26" stroke-width="1.6"') +
+    rect(-24, 152, 48, 7, 'url(#goldV)') +
+    path('M-21 159 C-17 180 17 180 21 159Z', 'url(#gold)') + '<circle cy="186" r="5" fill="url(#gold)"/>' +
+    path('M-2.5 190 L2.5 190 L7 222 L-7 222Z', '#2F7D79') + rect(-4, 190, 8, 4, 'url(#gold)') + path('M-6 222 L6 222', 'none', ' stroke="#225E5B" stroke-width="2"');
+  return s + '<g transform="translate(0 ' + chain + ') scale(' + sc + ')">' + g + '</g>';
+}
+
+/* ---------- the marigold toran: real flower heads strung along a curve ---------- */
+function strand(pts, size, seed) {
+  var s = '', r = seed || 1;
+  function rnd() { r = (r * 9301 + 49297) % 233280; return r / 233280; }
+  pts.forEach(function (p, i) {
+    var sz = size * (.85 + rnd() * .3), id = (i + Math.round(seed)) % 3 ? 'mgy' : 'mgo';
+    s += '<use href="#' + id + '" x="' + f(p[0] - sz / 2) + '" y="' + f(p[1] - sz * .38) + '" width="' + f(sz) + '" height="' + f(sz * .75) + '" transform="rotate(' + Math.round(rnd() * 360) + ' ' + f(p[0]) + ' ' + f(p[1]) + ')"/>';
+  });
+  return s;
+}
+function swag(x0, x1, y, drop, gap) {
+  var pts = [], n = Math.max(2, Math.round((x1 - x0) / gap));
+  for (var i = 0; i <= n; i++) { var t = i / n; pts.push([x0 + (x1 - x0) * t, y + drop * 4 * t * (1 - t)]); }
+  return pts;
+}
+function hang(x, y0, y1, gap) { var pts = []; for (var y = y0; y <= y1; y += gap) pts.push([x + Math.sin(y * .05) * 1.2, y]); return pts; }
+function toran(x0, x1, y, k, drop, size) {
+  var s = '', w = (x1 - x0) / k;
+  for (var i = 0; i < k; i++) s += strand(swag(x0 + w * i, x0 + w * (i + 1), y, drop, size * .62), size, i * 7 + x0);
+  return s;
+}
+
+/* ---------- the whole façade ---------- */
+function wing() {                              /* the left wing, x 0–460; the right is its mirror */
+  var o = [138, 506, 174, 440];
+  return '<g filter="url(#stone)">' +
+    rect(18, 420, 446, 580, 'url(#marbleW)') +
+    rect(96, 470, 260, 530, 'url(#marbleW)') +
+    minaret(30, 300, 1000, 40) +
+    '</g>' +
+    pishtaq(96, 470, 260, 530, 16, o, 0) + jaali(o, 'jw') +
+    chhajja(0, 470, 400, 7) + kanguras(20, 452, 400, 26) +
+    '<g filter="url(#stone)">' + chhatri(232, 374, 150) + '</g>';
+}
+function centre() {                            /* centre jharokha, 600 × 900, placed at (450, 100) */
+  var op = cusp(110, 290, 380, 480, true);
+  return '<g filter="url(#stone)">' +
+    rect(30, 222, 540, 678, 'url(#marble)') +
+    dome(300, 150, 300, 150) +
+    rect(186, 146, 228, 26, 'url(#marble)', ' stroke="' + CV + '" stroke-width="1"') +
+    '</g>' +
+    (function () { var s = ''; for (var i = 0; i < 9; i++) s += path(cusp(192 + i * 24.6, 151, 18, 18, false), 'none', ' stroke="' + CV + '" stroke-width=".9"'); return s; })() +
+    kanguras(30, 570, 194, 24) + chhajja(0, 600, 196, 8) +
+    rect(36, 236, 528, 4, GD, ' opacity=".55"') +
+    pishtaq(62, 248, 476, 652, 22, [110, 290, 380, 480], 15) +
+    path(op, 'url(#skyW)') + path(op, 'url(#jaali)') +
+    rect(78, 782, 444, 24, 'url(#slab)', ' stroke="' + LN + '"') + rect(78, 806, 444, 8, 'url(#under)') +
+    rect(96, 820, 408, 40, 'url(#inlay)', ' opacity=".85"') + rect(96, 820, 408, 40, 'none', ' stroke="' + CV + '"');
+}
+function facade() {
+  var base = '<svg class="base" viewBox="0 0 1500 1000" aria-hidden="true">' +
+    wing() + '<g transform="translate(1500 0) scale(-1 1)">' + wing().replace(/"jw"|#jw\)/g, function (m) { return m.replace('jw', 'jw2'); }) + '</g>' +
+    '<g transform="translate(450 100)">' + centre() + '</g>' +
+    '</svg>';
+  /* everything in front of the window: its depth, its columns, its sill, the garlands, the lanterns, the terrace */
+  var op = 'translate(450 100)';
+  var over = '<svg class="over" viewBox="0 0 1500 1000" aria-hidden="true">' +
+    '<clipPath id="opc"><path transform="' + op + '" d="' + cusp(110, 290, 380, 480, true) + '"/></clipPath>' +
+    '<g clip-path="url(#opc)"><path transform="' + op + '" d="' + cusp(110, 290, 380, 480, true) + '" fill="none" stroke="#5E5240" stroke-opacity=".38" stroke-width="34" filter="url(#soft)"/></g>' +
+    '<g transform="' + op + '">' +
+      path(cusp(110, 290, 380, 480, false), 'none', ' stroke="url(#gold)" stroke-width="3.2"') +
+      column(86, 478, 784, 20) + column(494, 478, 784, 20) +
+      rect(66, 772, 468, 12, 'url(#slab)', ' stroke="' + LN + '"') + rect(66, 775, 468, 1.4, GD) +
+    '</g>' +
+    /* torans along the eaves, and long strands down the frame */
+    '<g transform="' + op + '">' + toran(4, 596, 222, 4, 30, 30) + strand(hang(14, 232, 600, 17), 27, 3) + strand(hang(586, 232, 600, 17), 27, 9) +
+      '<use href="#mgo" x="0" y="606" width="28" height="21"/><use href="#mgo" x="572" y="606" width="28" height="21"/></g>' +
+    toran(4, 466, 426, 2, 26, 26) + toran(1034, 1496, 426, 2, 26, 26) +
+    /* lanterns in the side arches */
+    '<g class="swing" style="transform-origin:232px 512px;--d:4.6s;--a0:-3deg;--a1:3deg"><g transform="translate(232 512)">' + lantern(60, .82) + '</g></g>' +
+    '<g class="swing" style="transform-origin:1268px 512px;--d:5.2s;--dl:-1.7s;--a0:-3deg;--a1:3deg"><g transform="translate(1268 512)">' + lantern(60, .82) + '</g></g>' +
+    /* the terrace */
+    '<g filter="url(#stone)">' + balustrade(0, 1500, 936, 1000) + '</g>' + post(20, 922, 1000) + post(450, 922, 1000) + post(1050, 922, 1000) + post(1480, 922, 1000) +
+    '</svg>';
+  return base + over;
+}
+
+/* ---------- placing a painting ---------- */
+function art(parent, name, o) {
+  var e = document.createElement('div'); e.className = 'art' + (o.cls ? ' ' + o.cls : '');
+  var inner = document.createElement('i'); e.appendChild(inner);
+  e.style.setProperty('--a', 'var(--a-' + name + ')');
+  var a = ASP[name], s = e.style;
+  s.width = o.w; s.aspectRatio = a[0] + ' / ' + a[1];
+  ['left', 'right', 'top', 'bottom'].forEach(function (k) { if (o[k] != null) s[k] = o[k]; });
+  var tf = [];
+  if (o.rot) tf.push('rotate(' + o.rot + 'deg)');
+  if (o.flip) tf.push('scaleX(-1)');
+  if (o.flipY) tf.push('scaleY(-1)');
+  if (tf.length) inner.style.transform = tf.join(' ');
+  if (o.op != null) s.opacity = o.op;
+  if (o.blur) s.filter = 'blur(' + o.blur + 'px)';
+  if (o.z) s.zIndex = o.z;
+  parent.appendChild(e); return e;
+}
+
+/* lanterns hung from far above */
+function hangLamps(lamps) {
+  [[6, 62, 1, 5.4, 0], [94, 62, 1, 6, -2.2]].forEach(function (l) {
+    var d = document.createElement('div'), h = l[1], w = l[2] * 7.5;
+    d.className = 'lamp';
+    d.style.cssText = 'left:calc(' + l[0] + 'cqw - ' + (w / 2) + 'cqmin);width:' + w + 'cqmin;height:calc(' + h + 'cqh + ' + (l[2] * 34) + 'cqmin);--d:' + l[3] + 's;--dl:' + l[4] + 's;--a0:-1.6deg;--a1:1.6deg';
+    d.innerHTML = '<svg viewBox="-30 0 60 1" preserveAspectRatio="xMidYMin meet"></svg>';
+    lamps.appendChild(d);
+    var sv = d.firstChild;
+    function draw() {
+      if (!d.isConnected) return;
+      var r = { width: d.offsetWidth, height: d.offsetHeight }, u = 60 / r.width, chain = Math.max(10, (r.height - r.width * 3.75) * u);
+      sv.setAttribute('viewBox', '-30 0 60 ' + f(chain + 226)); sv.innerHTML = lantern(chain, 1);
+    }
+    draw(); window.addEventListener('resize', draw);
+  });
+}
+
+/* ---------- garden walk ---------- */
+function garden(root) {
+  root.innerHTML = '<section class="sc" aria-label="The wedding of Vanya and Jasneal"><div class="back"></div><div class="mist"></div><div class="wash"></div><div class="layer far" id="far"></div><div class="frame" id="frame"></div><div class="layer front" id="front"></div><div class="layer lamps" id="lamps"></div><div class="grain"></div></section>';
+  var fr = document.getElementById('frame');
+  fr.innerHTML = facade();
+  fr.insertBefore(document.getElementById('win-tpl').content.cloneNode(true), fr.querySelector('svg.over'));
+  /* the peacock stands on the terrace rail, its tail down over the balusters */
+  art(fr, 'peacock-solo', { w: '20%', left: '15.4%', bottom: '-9%' });
+  art(fr, 'peacock-solo', { w: '20%', right: '15.4%', bottom: '-9%', flip: 1 });
+
+  var far = document.getElementById('far'), front = document.getElementById('front'), lamps = document.getElementById('lamps');
+  /* trees between the terrace and the hills */
+  art(far, 'banana', { w: '60cqmin', left: '-14cqw', bottom: '22cqh', op: .5, blur: 1.5 });
+  art(far, 'banana', { w: '58cqmin', right: '-14cqw', bottom: '24cqh', op: .5, blur: 1.5, flip: 1 });
+
+  /* the garden that stays */
+  art(front, 'kadam', { w: 'min(50cqmin, 36cqw)', left: 'max(-16cqmin, -14cqw)', bottom: '14cqh', rot: 24 });
+  art(front, 'kadam', { w: 'min(48cqmin, 34cqw)', right: 'max(-16cqmin, -14cqw)', bottom: '18cqh', rot: -24, flip: 1 });
+  art(front, 'jasmine', { w: 'min(44cqmin, 38cqw)', left: '-7cqmin', top: '-6cqh', rot: 180 });
+  art(front, 'plumeria', { w: 'min(40cqmin, 34cqw)', right: '-6cqmin', top: '-12cqh', rot: 200 });
+  art(front, 'rose', { w: '44cqmin', left: '-6cqmin', bottom: '-12cqh' });
+  art(front, 'marigold', { w: '30cqmin', left: '20cqmin', bottom: '-10cqh' });
+  art(front, 'rose-red', { w: '44cqmin', right: '-6cqmin', bottom: '-12cqh', flip: 1 });
+  art(front, 'marigold', { w: '30cqmin', right: '20cqmin', bottom: '-10cqh', flip: 1 });
+
+  hangLamps(lamps);
+}
+
+/* ---------- invitation: the card between two peacocks ---------- */
+function invite(root) {
+  var sw = '', W = 1600, k = 5, w = W / k;
+  for (var i = 0; i < k; i++) sw += strand(swag(w * i, w * (i + 1), 40, 70, 20), 32, i * 5 + 2);
+  for (i = 0; i <= k; i++) {
+    sw += strand(hang(w * i, 70, 190, 18), 26, i * 3 + 1) + '<use href="#lh" x="' + (w * i - 54) + '" y="-4" width="108" height="93"/>';
+  }
+  root.innerHTML = '<section class="iv" aria-label="The wedding of Vanya and Jasneal"><div class="back"></div><div class="mist"></div>' +
+    '<div class="arch" id="arch"></div><div class="veil"></div>' +
+    '<svg class="swags" viewBox="0 0 1600 240" aria-hidden="true">' + sw + '</svg>' +
+    '<div class="layer ground" id="ground"></div>' +
+    '<div class="bird l" id="bl"><div class="plinth"></div></div><div class="bird r" id="br"><div class="plinth"></div></div>' +
+    '<div class="gcard">' +
+      '<i class="fl tl" style="--a:var(--a-rose-head)"></i><i class="fl tr" style="--a:var(--a-lotus-head)"></i><i class="fl bl" style="--a:var(--a-lotus-head)"></i><i class="fl br" style="--a:var(--a-rose-head)"></i>' +
+      '<p class="pre">॥ श्री गणेशाय नमः ॥</p><h1>Vanya &amp; Jasneal are getting married</h1>' +
+      '<p class="when">July 6–10, 2027 · Calgary, Alberta</p>' +
+      '<div class="btns"><a class="btn solid" href="#rsvp" data-go="rsvp">RSVP now</a><a class="btn ghost" href="#events" data-go="events">View events</a></div>' +
+    '</div><div class="grain"></div></section>';
+  document.getElementById('arch').innerHTML = facade();
+  ['bl', 'br'].forEach(function (id) { art(document.getElementById(id), 'peacock-solo', { w: '100%', left: '0', top: '0', z: 2 }); });
+  var g = document.getElementById('ground');
+  art(g, 'rose', { w: 'min(30cqmin, 30cqw)', left: '-4cqmin', bottom: '-9cqh' });
+  art(g, 'rose-red', { w: 'min(28cqmin, 28cqw)', right: '-4cqmin', bottom: '-9cqh', flip: 1 });
+  art(g, 'marigold', { w: 'min(24cqmin, 26cqw)', left: 'calc(50% - 44cqmin)', bottom: '-8cqh' });
+  art(g, 'marigold', { w: 'min(24cqmin, 26cqw)', right: 'calc(50% - 44cqmin)', bottom: '-8cqh', flip: 1 });
+  art(g, 'lotus', { w: 'min(30cqmin, 34cqw)', left: 'calc(50% - 15cqmin)', bottom: '-5cqh' });
+}
+
+/* ---------- the five days ---------- */
+var HOUSE = 'Dhaliwal house', VENICE = 'Venice Banquet Hall', ESTATE = 'Empire Estate', HALL = 'Empire Banquet Hall';
+var PLACE = {};
+PLACE[HOUSE] = { a: 'Rocky View County, AB', note: 'We’ll share the exact address with guests.', priv: 1 };
+PLACE[VENICE] = { a: '4310 104 Ave NE #2202, Calgary' };
+PLACE[ESTATE] = { a: '284065 Township Rd 245A, Rocky View County, AB' };
+PLACE[HALL] = { a: '4826 11 St NE, Calgary, AB' };
+function maps(p) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p + ', ' + PLACE[p].a); }
+function placeLink(p) { return PLACE[p].priv ? p : '<a href="' + maps(p) + '" target="_blank" rel="noopener">' + p + '</a>'; }
+var EV = [
+  { d: 6, wd: 'Tue', name: 'Mehndi', g: '#2F5D45', wash: '#E3ECD3', tx: '#F6F3E2', dv: 'मेहंदी', art: 'kadam', at: HOUSE, m: 'Henna is painted on Vanya’s hands while the families sing. Guests can get a design too. It’s relaxed, so come for as long as you like.', w: 'Yellows and greens', sw: ['#E9B824', '#F2D15C', '#7FA650'] },
+  { d: 7, wd: 'Wed', name: 'Sangeet & Jaggo', g: '#14305E', wash: '#DCE3F0', tx: '#F6EFD9', dv: 'संगीत · जागो', art: 'peacock-solo', at: VENICE, m: 'A night of music and dance from both families. The Jaggo is the Punjabi tradition of parading with a decorated pot of lamps, singing to wake up the neighbourhood.', w: 'Jewel tones and sparkle', sw: ['#14305E', '#7B1E4A', '#0F6B5C'] },
+  { d: 8, wd: 'Thu', name: 'Haldi', g: '#E9B824', wash: '#FCF2C8', tx: '#33260A', dv: 'हल्दी', art: 'marigold', at: HOUSE, m: 'Family and friends smear turmeric paste on the couple for luck and a glow before the wedding. It’s messy and very fun.', w: 'Yellow, in something you don’t mind staining', sw: ['#F2C230', '#E9A820', '#FFF0B8'] },
+  { d: 9, wd: 'Fri', name: 'Wedding', g: '#8E1F3F', wash: '#F8E1E2', tx: '#FBF0E4', dv: 'विवाह', art: 'lotus', at: ESTATE, m: 'The Hindu ceremony: garlands, the walk around the sacred fire, and seven steps that are seven vows.', w: 'Indian formal; please avoid white and red', sw: ['#C95C7A', '#2F7D79', '#C9A35A'] },
+  { d: 10, wd: 'Sat', name: 'Reception', g: '#4A2545', wash: '#EFE1EA', tx: '#F8EEDD', dv: 'स्वागत', art: 'rose', at: HALL, m: 'Their first entrance as a married couple, then dinner, toasts and dancing.', w: 'Evening formal, Indian or Western', sw: ['#1E2A44', '#6B2E3E', '#C9A35A'] }
+];
+function dayList() {
+  document.getElementById('events').innerHTML = '<div class="corner" aria-hidden="true"></div><div class="in"><h2>Five days, five celebrations</h2><p class="lede">What happens at each one and what to wear, especially if this is your first Indian wedding. Times to follow.</p><div class="days">' +
+    EV.map(function (e) { return '<article class="day"><p class="d"><small>' + e.wd + ', July</small>' + e.d + '</p><div class="body"><h3>' + e.name + ' <span>' + e.dv + '</span></h3><p class="m">' + e.m + '</p><div class="info"><div><h4>What to wear</h4><div class="sw" aria-hidden="true">' + e.sw.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join('') + '</div><p>' + e.w + '</p></div><div><h4>Where</h4><p>' + placeLink(e.at) + '<br>' + PLACE[e.at].a + '</p></div></div></div><div class="pic" style="--a:var(--a-' + e.art + ')" aria-hidden="true"></div></article>'; }).join('') + '</div></div>';
+}
+function sections() {
+  document.getElementById('venues').innerHTML = '<div class="in"><h2>Where to go</h2><p class="lede">Four places across Calgary and Rocky View County.</p><div class="vgrid">' +
+    Object.keys(PLACE).map(function (p) { var es = EV.filter(function (e) { return e.at === p; }); return '<article class="vn"><div class="t">' + es.map(function (e) { return '<b>' + e.name + ' · July ' + e.d + '</b>'; }).join('') + '</div><h3>' + p + '</h3><p>' + PLACE[p].a + '</p>' + (PLACE[p].note ? '<p class="note">' + PLACE[p].note + '</p>' : '') + (PLACE[p].priv ? '' : '<a href="' + maps(p) + '" target="_blank" rel="noopener">Open in Maps</a>') + '</article>'; }).join('') + '</div></div>';
+  document.getElementById('photos').innerHTML = '<div class="in ph2"><img src="art/couple.webp" alt="Jasneal and Vanya walking hand in hand along a beach at dusk" loading="lazy"><div><h2>Jasneal &amp; Vanya</h2><p class="lede">More engagement photos to come.</p></div></div>';
+  document.getElementById('rsvp').innerHTML = '<div class="in rs"><div><h2>RSVP</h2><p class="lede">Tell us which days you can make. You can change your answer later.</p></div><form id="rf"><div class="two"><label>Your name<input type="text" name="n" autocomplete="name" required></label><label>Guests<input type="number" name="g" min="1" max="12" value="1" inputmode="numeric"></label></div><label>Email<input type="email" name="e" autocomplete="email" required></label><fieldset><legend>I’ll be at</legend><div class="pills">' +
+    EV.map(function (e) { return '<label><input type="checkbox" name="ev" value="' + e.name + '" checked><span>' + e.name + ' · ' + e.d + '</span></label>'; }).join('') + '</div></fieldset><label>Dietary needs or a note<textarea name="t" rows="3"></textarea></label><button class="btn solid" type="submit">Send RSVP</button><p class="ok" id="rok" role="status" hidden>Mock-up only: nothing was sent. The real form will save your answer.</p></form></div>';
+  document.getElementById('rf').addEventListener('submit', function (e) { e.preventDefault(); document.getElementById('rok').hidden = false; });
+  document.getElementById('cards').innerHTML =
+    '<article class="fact"><img src="art/m/lotus-head.webp" alt=""><h3>The Wedding</h3><p>Friday, July 9, 2027<br>Empire Estate, Rocky View County</p></article>' +
+    '<article class="fact"><img src="art/m/rose-head.webp" alt=""><h3>The Reception</h3><p>Saturday, July 10, 2027<br>Empire Banquet Hall, Calgary</p></article>' +
+    '<article class="fact"><h3>Days until the wedding</h3><div class="count" id="count" role="timer"></div></article>';
+}
+/* ---------- open garden: no building, the names in a clearing among the flowers ---------- */
+function openGarden(root) {
+  root.innerHTML = '<section class="sc og" aria-label="The wedding of Vanya and Jasneal"><div class="back"></div><div class="mist"></div><div class="layer far" id="far"></div><div class="veil"></div><div class="layer front" id="front"></div><div class="layer lamps" id="lamps"></div>' +
+    '<div class="og-t"><p class="pre">॥ श्री गणेशाय नमः ॥</p><h1>Vanya <i>&amp;</i> Jasneal</h1><p class="when">July 6–10, 2027 · Calgary, Alberta</p><div class="btns"><a class="btn solid" href="#rsvp" data-go="rsvp">RSVP</a><a class="btn ghost" href="#events" data-go="events">The five days</a></div></div><div class="grain"></div></section>';
+  var far = document.getElementById('far'), front = document.getElementById('front');
+  art(far, 'banana', { w: '56cqmin', left: '-12cqw', bottom: '12cqh', op: .55, blur: 1.5 });
+  art(far, 'banana', { w: '54cqmin', right: '-12cqw', bottom: '14cqh', op: .55, blur: 1.5, flip: 1 });
+  art(front, 'jasmine', { w: 'min(50cqmin, 30cqw)', left: '-6cqmin', top: '-8cqh', rot: 180 });
+  art(front, 'plumeria', { w: 'min(46cqmin, 28cqw)', right: '-5cqmin', top: '-14cqh', rot: 200 });
+  art(front, 'kadam', { w: 'min(52cqmin, 40cqw)', left: 'max(-12cqmin, -12cqw)', bottom: '20cqh', rot: 24 });
+  art(front, 'kadam', { w: 'min(50cqmin, 38cqw)', right: 'max(-12cqmin, -12cqw)', bottom: '24cqh', rot: -24, flip: 1 });
+  art(front, 'peacock-solo', { w: 'min(50cqmin, 42cqw)', left: 'max(4cqw, 50cqw - 74cqmin)', bottom: '-5cqh' });
+  art(front, 'peacock-solo', { w: 'min(50cqmin, 42cqw)', right: 'max(4cqw, 50cqw - 74cqmin)', bottom: '-5cqh', flip: 1 });
+  art(front, 'rose', { w: '46cqmin', left: '-8cqmin', bottom: '-14cqh' });
+  art(front, 'rose-red', { w: '46cqmin', right: '-8cqmin', bottom: '-14cqh', flip: 1 });
+  art(front, 'marigold', { w: '38cqmin', left: 'calc(50% - 50cqmin)', bottom: '-11cqh' });
+  art(front, 'marigold', { w: '38cqmin', right: 'calc(50% - 50cqmin)', bottom: '-11cqh', flip: 1 });
+  art(front, 'lotus', { w: '30cqmin', left: 'calc(50% - 30cqmin)', bottom: '-7cqh' });
+  art(front, 'lotus', { w: '30cqmin', right: 'calc(50% - 30cqmin)', bottom: '-7cqh', flip: 1 });
+  art(front, 'lotus', { w: '36cqmin', left: 'calc(50% - 18cqmin)', bottom: '-6cqh' });
+  hangLamps(document.getElementById('lamps'));
+}
+
+/* to the start of July 9 in Calgary; the ceremony time isn't set yet */
+function tick() {
+  var el = document.getElementById('count'); if (!el) return;
+  var t = Math.max(0, new Date('2027-07-09T00:00:00-06:00') - Date.now()) / 1000;
+  el.innerHTML = [[Math.floor(t / 86400), 'DAYS'], [Math.floor(t / 3600) % 24, 'HRS'], [Math.floor(t / 60) % 60, 'MINS'], [Math.floor(t) % 60, 'SECS']].map(function (p) { return '<div>' + p[0] + '<small>' + p[1] + '</small></div>'; }).join('');
+}
+setInterval(tick, 1000);
+
+/* ---------- views and controls ---------- */
+var page = document.getElementById('page'), home = document.getElementById('home'), view = '';
+function setView(v) {
+  if (v === view) return; view = v;
+  document.body.classList.toggle('invite', v === 'invite');
+  (v === 'invite' ? invite : v === 'open' ? openGarden : garden)(home);
+}
+function mode(m) { page.classList.toggle('photo', m === 'photo'); }
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault();
+  document.getElementById(a.dataset.go).scrollIntoView();
+});
+window.addEventListener('message', function (e) {
+  var m = e.data || {};
+  if (m.view) setView(m.view);
+  if (m.mode) mode(m.mode);
+  if (m.bg) document.body.dataset.bg = m.bg;
+});
+dayList(); sections(); tick();
+var H = location.hash;
+setView(/invite/.test(H) ? 'invite' : /open/.test(H) ? 'open' : 'garden');
+mode(/photo/.test(H) ? 'photo' : 'text');
+document.body.dataset.bg = (/bg=(\w+)/.exec(H) || [0, 'rockies'])[1];
+if (window.parent !== window) window.parent.postMessage({ ready: 1 }, '*');
+</script>
+</body>
+</html>
