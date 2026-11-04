@@ -212,6 +212,110 @@ footer a { color: inherit; }
 .og-t .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
 @media (max-width: 820px) { .og-t { top: 17cqh; transform: translateX(-50%); gap: 8px; } .og-t h1 { font-size: 2.95rem; } .og .back { background-position: 78% 40%; } .og .veil { background: radial-gradient(ellipse 80% 30% at 50% 26%, #F7F8F2f2 40%, #F7F8F200); } }
 
+/* ---------- compact: the whole week on the first screen ---------- */
+.cp { position: relative; overflow: hidden; height: max(620px, calc(100svh - 56px)); display: grid; grid-template-rows: minmax(0, 1fr) auto auto; background: #FBF8F0; color: #26402F; }
+.cp .hero { position: relative; overflow: hidden; container-type: size; min-height: 0; }
+.cp .hero > .layer { position: absolute; inset: 0; pointer-events: none; }
+.cp h1 { font: 500 clamp(2.4rem, 10cqmin, 4.8rem)/1 "Cormorant Garamond", serif; color: #26402F; }
+.cp h1 i { color: #A67C2E; font-weight: 400; }
+.cp .pre { font: 400 .95rem/1 "Tiro Devanagari Hindi", serif; color: #A67C2E; }
+.cp .when { font: 500 1.08rem/1.4 "Jost", sans-serif; color: #26402F; }
+.cp .sw { display: inline-flex; gap: 3px; margin: 0 7px 0 0; vertical-align: -2px; }
+.cp .sw i { width: 12px; height: 12px; border-radius: 50%; }
+.cp .at a { color: #2C5A3C; text-underline-offset: 3px; }
+.cp .btns { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
+.cp .btn { padding: 13px 30px; }
+
+/* A: the painted scene holds the card; the week sits on paper below */
+.ca .back { height: 100%; }
+.ca .mist { inset: 58% 0 0; background: linear-gradient(#FBF8F000, #FBF8F0); }
+.ca .card { position: absolute; z-index: 6; left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(640px, 84cqw); padding: clamp(22px, 5cqh, 42px) 40px clamp(22px, 5cqh, 40px);
+  display: grid; justify-items: center; gap: 8px; text-align: center; background: #FFFDF8f2; border-radius: 4px; box-shadow: 0 26px 60px #26402F2e; outline: 1px solid #A67C2E66; outline-offset: -10px; }
+.ca .fl { position: absolute; width: clamp(56px, 15cqmin, 104px); pointer-events: none; }
+.ca .fl.a { left: -22px; top: -26px; }
+.ca .fl.b { right: -20px; bottom: -22px; }
+.ca .sub { font: italic 400 clamp(1.25rem, 3.4cqmin, 1.75rem)/1 "Cormorant Garamond", serif; color: #A67C2E; margin-top: -2px; }
+.evs { list-style: none; margin: 0; padding: clamp(12px, 2.2vh, 22px) clamp(16px, 3vw, 48px) 0; width: 100%; max-width: 1400px; justify-self: center;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 18px); }
+.evs li { position: relative; display: grid; justify-items: center; align-content: start; gap: 3px; text-align: center; padding: 14px 12px 15px; background: #FFFDF8; border-radius: 3px;
+  box-shadow: inset 0 3px 0 var(--g), 0 10px 26px #26402F12; outline: 1px solid #A67C2E3d; outline-offset: -6px; font: 400 .9rem/1.35 "Jost", sans-serif; }
+.evs img { width: 40px; height: 34px; object-fit: contain; margin: 2px 0 1px; }
+.evs h3 { font: 500 1.5rem/1.05 "Cormorant Garamond", serif; color: var(--gi); }
+.evs .dt { font-weight: 500; }
+.evs .dt .sh { display: none; }
+.evs .wr { color: #5E7466; font-size: .84rem; }
+.ca .foot { text-align: center; padding: clamp(8px, 1.6vh, 14px) 16px clamp(10px, 1.8vh, 16px); font: italic 400 1.12rem/1.3 "Cormorant Garamond", serif; color: #5E7466; }
+
+/* B: the save-the-date itself, the week along the lotus pond */
+.cg { grid-template-rows: minmax(0, 1fr); background: #EEF4F0; }
+.cg .back { height: 100%; opacity: .8; }
+.cg .mist { inset: 46% 0 0; background: linear-gradient(#EEF4F000, #EEF4F0e0 40%, #E3EDE6); }
+.cg .veil { position: absolute; inset: 0; background: radial-gradient(ellipse 42% 34% at 50% 26%, #F7F8F2f0 35%, #F7F8F200); }
+.gt { position: absolute; z-index: 6; left: 50%; top: 10cqh; transform: translateX(-50%); width: min(760px, 92cqw); text-align: center; display: grid; justify-items: center; gap: 8px; }
+.gt .for { font: 400 clamp(1.15rem, 3cqmin, 1.6rem)/1 "Cormorant Garamond", serif; color: #2C5A3C; margin-top: 4px; }
+.gt h1 { font-size: clamp(2.6rem, 11cqmin, 5.6rem); color: #2C5A3C; }
+.gt .when { font-size: clamp(1rem, 2.6cqmin, 1.3rem); }
+.gt .btn { margin-top: 6px; }
+.week { position: absolute; z-index: 6; left: 50%; bottom: 17cqh; transform: translateX(-50%); width: min(1120px, 80cqw); list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #FFFDF8e8; border-radius: 4px; box-shadow: 0 20px 50px #26402F24; outline: 1px solid #A67C2E55; outline-offset: -7px; }
+.week li + li { border-left: 1px solid #A67C2E33; }
+.week a { display: grid; justify-items: center; align-content: start; gap: 3px; padding: 18px 12px 18px; text-align: center; text-decoration: none; color: #26402F; font: 400 .88rem/1.35 "Jost", sans-serif; height: 100%; }
+.week a:hover { background: #F3F6EF; }
+.week .wk { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: #5E7466; }
+.week .d { font: 500 2.6rem/.95 "Cormorant Garamond", serif; color: var(--gi); font-variant-numeric: lining-nums; }
+.week b { font: 500 1.35rem/1.1 "Cormorant Garamond", serif; }
+.week .at { font-weight: 500; color: #2C5A3C; }
+.week .wr { color: #5E7466; font-size: .82rem; }
+.cg .tap { display: none; }
+
+@media (max-width: 820px) {
+  .cp { height: auto; min-height: calc(100svh - 56px); grid-template-rows: auto auto auto; }
+  .cp .btn { padding: 11px 20px; font-size: .92rem; }
+  .cp .when { font-size: .9rem; }
+  .ca .hero { height: 252px; }
+  .ca .back { background-position: 70% 40%; }
+  .ca .front .art:nth-child(n+3), .cp .lamps { display: none; }
+  .ca .card { width: calc(100% - 36px); top: 53%; padding: 16px 14px 15px; gap: 5px; outline-offset: -7px; }
+  .ca .fl { width: 52px; }
+  .ca .fl.a { left: -10px; top: -16px; }
+  .ca .fl.b { right: -10px; bottom: -14px; }
+  .ca h1 { font-size: 2.3rem; }
+  .ca .sub { font-size: 1.15rem; }
+  .ca .btns { margin-top: 4px; gap: 8px; }
+  .evs { grid-template-columns: 1fr; gap: 0; padding: 4px 18px 10px; }
+  .evs li { grid-template-columns: 30px minmax(0, 1fr) auto; justify-items: start; align-items: center; gap: 0 10px; padding: 6px 0; text-align: left;
+    background: none; box-shadow: none; outline: 0; border-radius: 0; border-bottom: 1px solid #26402F14; font-size: .8rem; }
+  .evs li:last-child { border-bottom: 0; }
+  .evs img { grid-row: 1 / 3; width: 30px; height: 28px; margin: 0; }
+  .evs h3 { font-size: 1.18rem; }
+  .evs .dt { grid-column: 3; grid-row: 1; justify-self: end; }
+  .evs .dt .lg { display: none; } .evs .dt .sh { display: inline; }
+  .evs .at { grid-column: 2; grid-row: 2; }
+  .evs .wr { grid-column: 3; grid-row: 2; justify-self: end; }
+  .evs .wr > span:last-child { display: none; }
+  .evs .sw { margin: 0; }
+  .ca .foot { display: none; }
+
+  .cg { grid-template-rows: auto; }
+  .cg .hero { height: max(560px, calc(100svh - 56px)); }
+  .cg .back { background-position: 72% 40%; }
+  .cg .veil { background: radial-gradient(ellipse 90% 34% at 50% 24%, #F7F8F2f2 40%, #F7F8F200); }
+  .cg .front .art:nth-child(3), .cg .front .art:nth-child(4) { display: none; }
+  .gt { top: 5cqh; gap: 6px; }
+  .cg .front .art:nth-child(n+5) { width: 62cqmin !important; bottom: -12cqh !important; }
+  .gt h1 { font-size: 2.7rem; }
+  .week { bottom: auto; top: 49cqh; width: calc(100% - 24px); }
+  .week li + li { border-left-color: #A67C2E26; }
+  .week a { padding: 12px 0; gap: 2px; font-size: .74rem; }
+  .week .wk { font-size: .62rem; letter-spacing: .1em; }
+  .week .d { font-size: 2rem; }
+  .week b { font-size: .9rem; line-height: 1.05; min-height: 2.1em; display: grid; align-items: center; }
+  .week .at, .week .wr > span:last-child { display: none; }
+  .week .sw { margin: 2px 0 0; gap: 2px; }
+  .week .sw i { width: 9px; height: 9px; }
+  .cg .tap { display: block; position: absolute; z-index: 6; left: 0; right: 0; top: calc(49cqh + 128px); text-align: center; font: italic 400 1rem/1.3 "Cormorant Garamond", serif; color: #2C5A3C; padding: 0 20px; }
+}
+
 body[data-bg="rockies"] { --bgart: var(--a-rockies); --bgpos: 62% 60%; }
 body[data-bg="rockies2"] { --bgart: var(--a-rockies2); --bgpos: 30% 40%; }
 html { overflow-x: clip; }
@@ -662,11 +766,11 @@ PLACE[HALL] = { a: '4826 11 St NE, Calgary, AB' };
 function maps(p) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p + ', ' + PLACE[p].a); }
 function placeLink(p) { return PLACE[p].priv ? p : '<a href="' + maps(p) + '" target="_blank" rel="noopener">' + p + '</a>'; }
 var EV = [
-  { d: 6, wd: 'Tue', name: 'Mehndi', g: '#2F5D45', wash: '#E3ECD3', tx: '#F6F3E2', dv: 'मेहंदी', art: 'kadam', at: HOUSE, m: 'Henna is painted on Vanya’s hands while the families sing. Guests can get a design too. It’s relaxed, so come for as long as you like.', w: 'Yellows and greens', sw: ['#E9B824', '#F2D15C', '#7FA650'] },
-  { d: 7, wd: 'Wed', name: 'Sangeet & Jaggo', g: '#14305E', wash: '#DCE3F0', tx: '#F6EFD9', dv: 'संगीत · जागो', art: 'peacock-solo', at: VENICE, m: 'A night of music and dance from both families. The Jaggo is the Punjabi tradition of parading with a decorated pot of lamps, singing to wake up the neighbourhood.', w: 'Jewel tones and sparkle', sw: ['#14305E', '#7B1E4A', '#0F6B5C'] },
-  { d: 8, wd: 'Thu', name: 'Haldi', g: '#E9B824', wash: '#FCF2C8', tx: '#33260A', dv: 'हल्दी', art: 'marigold', at: HOUSE, m: 'Family and friends smear turmeric paste on the couple for luck and a glow before the wedding. It’s messy and very fun.', w: 'Yellow, in something you don’t mind staining', sw: ['#F2C230', '#E9A820', '#FFF0B8'] },
-  { d: 9, wd: 'Fri', name: 'Wedding', g: '#8E1F3F', wash: '#F8E1E2', tx: '#FBF0E4', dv: 'विवाह', art: 'lotus', at: ESTATE, m: 'The Hindu ceremony: garlands, the walk around the sacred fire, and seven steps that are seven vows.', w: 'Indian formal; please avoid white and red', sw: ['#C95C7A', '#2F7D79', '#C9A35A'] },
-  { d: 10, wd: 'Sat', name: 'Reception', g: '#4A2545', wash: '#EFE1EA', tx: '#F8EEDD', dv: 'स्वागत', art: 'rose', at: HALL, m: 'Their first entrance as a married couple, then dinner, toasts and dancing.', w: 'Evening formal, Indian or Western', sw: ['#1E2A44', '#6B2E3E', '#C9A35A'] }
+  { d: 6, wd: 'Tue', name: 'Mehndi', s: 'Henna, songs and an easy afternoon', ws: 'Yellows and greens', g: '#2F5D45', wash: '#E3ECD3', tx: '#F6F3E2', dv: 'मेहंदी', art: 'kadam', at: HOUSE, m: 'Henna is painted on Vanya’s hands while the families sing. Guests can get a design too. It’s relaxed, so come for as long as you like.', w: 'Yellows and greens', sw: ['#E9B824', '#F2D15C', '#7FA650'] },
+  { d: 7, wd: 'Wed', name: 'Sangeet & Jaggo', s: 'Music, dancing and the lamp parade', ws: 'Jewel tones', g: '#14305E', wash: '#DCE3F0', tx: '#F6EFD9', dv: 'संगीत · जागो', art: 'peacock-solo', at: VENICE, m: 'A night of music and dance from both families. The Jaggo is the Punjabi tradition of parading with a decorated pot of lamps, singing to wake up the neighbourhood.', w: 'Jewel tones and sparkle', sw: ['#14305E', '#7B1E4A', '#0F6B5C'] },
+  { d: 8, wd: 'Thu', name: 'Haldi', s: 'Turmeric paste for luck', ws: 'Yellow you can stain', g: '#E9B824', wash: '#FCF2C8', tx: '#33260A', dv: 'हल्दी', art: 'marigold', at: HOUSE, m: 'Family and friends smear turmeric paste on the couple for luck and a glow before the wedding. It’s messy and very fun.', w: 'Yellow, in something you don’t mind staining', sw: ['#F2C230', '#E9A820', '#FFF0B8'] },
+  { d: 9, wd: 'Fri', name: 'Wedding', s: 'The ceremony around the sacred fire', ws: 'Indian formal, no white or red', g: '#8E1F3F', wash: '#F8E1E2', tx: '#FBF0E4', dv: 'विवाह', art: 'lotus', at: ESTATE, m: 'The Hindu ceremony: garlands, the walk around the sacred fire, and seven steps that are seven vows.', w: 'Indian formal; please avoid white and red', sw: ['#C95C7A', '#2F7D79', '#C9A35A'] },
+  { d: 10, wd: 'Sat', name: 'Reception', s: 'Dinner, toasts and dancing', ws: 'Evening formal', g: '#4A2545', wash: '#EFE1EA', tx: '#F8EEDD', dv: 'स्वागत', art: 'rose', at: HALL, m: 'Their first entrance as a married couple, then dinner, toasts and dancing.', w: 'Evening formal, Indian or Western', sw: ['#1E2A44', '#6B2E3E', '#C9A35A'] }
 ];
 function dayList() {
   document.getElementById('events').innerHTML = '<div class="corner" aria-hidden="true"></div><div class="in"><h2>Five days, five celebrations</h2><p class="lede">What happens at each one and what to wear, especially if this is your first Indian wedding. Times to follow.</p><div class="days">' +
@@ -707,6 +811,51 @@ function openGarden(root) {
   hangLamps(document.getElementById('lamps'));
 }
 
+/* ---------- compact: everything on the first screen ---------- */
+function daysLeft() { return Math.max(0, Math.ceil((new Date('2027-07-09T00:00:00-06:00') - Date.now()) / 864e5)); }
+function swatch(e) { return '<span class="sw" aria-hidden="true">' + e.sw.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join('') + '</span>'; }
+var ICON = ['art/m/mg-y.webp', 'art/m/rose-head.webp', 'art/m/mg-o.webp', 'art/m/lotus-head.webp', 'art/m/rose-head.webp'];
+var WD = { Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday' };
+/* Haldi's turmeric yellow is too pale for text on paper */
+function ink(e) { return e.d === 8 ? '#A87A0C' : e.g; }
+
+/* idea A: the reference layout. A painted scene holding the invitation card, the five days on paper below */
+function compactCard(root) {
+  root.innerHTML = '<section class="cp ca" aria-label="The wedding of Vanya and Jasneal"><div class="hero"><div class="back"></div><div class="mist"></div><div class="layer front" id="front"></div><div class="layer lamps" id="lamps"></div>' +
+    '<div class="card"><img class="fl a" src="art/m/rose-head.webp" alt=""><img class="fl b" src="art/m/lotus-head.webp" alt=""><p class="pre">॥ श्री गणेशाय नमः ॥</p><h1>Vanya <i>&amp;</i> Jasneal</h1><p class="sub">are getting married</p><p class="when">July 6–10, 2027 · Calgary, Alberta</p>' +
+    '<div class="btns"><a class="btn solid" href="#rsvp" data-go="rsvp">RSVP</a><a class="btn ghost" href="#events" data-go="events">The five days</a></div></div></div>' +
+    '<ol class="evs">' + EV.map(function (e, i) {
+      return '<li style="--g:' + e.g + ';--gi:' + ink(e) + '"><img src="' + ICON[i] + '" alt=""><h3>' + e.name + '</h3><p class="dt"><span class="lg">' + WD[e.wd] + '</span><span class="sh">' + e.wd + '</span>, July ' + e.d + '</p><p class="at">' + placeLink(e.at) + '</p><p class="wr">' + swatch(e) + '<span>' + e.ws + '</span></p></li>';
+    }).join('') + '</ol><p class="foot">With love, we invite you to celebrate with us · ' + daysLeft() + ' days to go</p></section>';
+  var front = document.getElementById('front');
+  art(front, 'jasmine', { w: 'min(40cqmin, 26cqw)', left: '-6cqmin', top: '-12cqh', rot: 180 });
+  art(front, 'plumeria', { w: 'min(36cqmin, 24cqw)', right: '-5cqmin', top: '-18cqh', rot: 200 });
+  art(front, 'peacock-solo', { w: 'min(52cqmin, 24cqw)', left: 'max(-2cqw, 50cqw - 340px - 52cqmin)', bottom: '-3cqh' });
+  art(front, 'peacock-solo', { w: 'min(52cqmin, 24cqw)', right: 'max(-2cqw, 50cqw - 340px - 52cqmin)', bottom: '-3cqh', flip: 1 });
+  art(front, 'rose', { w: '30cqmin', left: '-7cqmin', bottom: '-12cqh' });
+  art(front, 'rose-red', { w: '30cqmin', right: '-7cqmin', bottom: '-12cqh', flip: 1 });
+  hangLamps(document.getElementById('lamps'));
+}
+/* idea B: the save-the-date itself, with the week written along the lotus pond */
+function compactGarden(root) {
+  root.innerHTML = '<section class="cp cg" aria-label="The wedding of Vanya and Jasneal"><div class="hero"><div class="back"></div><div class="mist"></div><div class="veil"></div><div class="layer front" id="front"></div><div class="layer lamps" id="lamps"></div>' +
+    '<div class="gt"><p class="pre">॥ श्री गणेशाय नमः ॥</p><p class="for">For the wedding of</p><h1>Vanya <i>&amp;</i> Jasneal</h1><p class="when">July 6–10, 2027 · Calgary, Alberta</p><a class="btn solid" href="#rsvp" data-go="rsvp">RSVP</a></div>' +
+    '<ol class="week">' + EV.map(function (e) {
+      return '<li style="--g:' + e.g + ';--gi:' + ink(e) + '"><a href="#events" data-go="events"><span class="wk">' + e.wd + '</span><span class="d">' + e.d + '</span><b>' + e.name + '</b><span class="at">' + e.at + '</span><span class="wr">' + swatch(e) + '<span>' + e.ws + '</span></span></a></li>';
+    }).join('') + '</ol><p class="tap">Tap a day for its meaning, venue and what to wear</p></div></section>';
+  var front = document.getElementById('front');
+  art(front, 'jasmine', { w: 'min(48cqmin, 30cqw)', left: '-6cqmin', top: '-12cqh', rot: 180 });
+  art(front, 'jasmine', { w: 'min(44cqmin, 28cqw)', right: '-6cqmin', top: '-14cqh', rot: 180, flip: 1 });
+  art(front, 'peacock-solo', { w: 'min(44cqmin, 22cqw)', left: 'max(1cqw, 50cqw - 330px - 44cqmin)', top: '22cqh' });
+  art(front, 'peacock-solo', { w: 'min(44cqmin, 22cqw)', right: 'max(1cqw, 50cqw - 330px - 44cqmin)', top: '22cqh', flip: 1 });
+  art(front, 'lotus', { w: '36cqmin', left: '-6cqmin', bottom: '-6cqh' });
+  art(front, 'lotus', { w: '32cqmin', left: 'calc(50% - 46cqmin)', bottom: '-8cqh', flip: 1 });
+  art(front, 'lotus', { w: '38cqmin', left: 'calc(50% - 19cqmin)', bottom: '-7cqh' });
+  art(front, 'lotus', { w: '32cqmin', right: 'calc(50% - 46cqmin)', bottom: '-8cqh' });
+  art(front, 'lotus', { w: '36cqmin', right: '-6cqmin', bottom: '-6cqh', flip: 1 });
+  hangLamps(document.getElementById('lamps'));
+}
+
 /* to the start of July 9 in Calgary; the ceremony time isn't set yet */
 function tick() {
   var el = document.getElementById('count'); if (!el) return;
@@ -720,7 +869,8 @@ var page = document.getElementById('page'), home = document.getElementById('home
 function setView(v) {
   if (v === view) return; view = v;
   document.body.classList.toggle('invite', v === 'invite');
-  (v === 'invite' ? invite : v === 'open' ? openGarden : garden)(home);
+  document.body.classList.toggle('compact', /^compact/.test(v));
+  (v === 'invite' ? invite : v === 'open' ? openGarden : v === 'compactA' ? compactCard : v === 'compactB' ? compactGarden : garden)(home);
 }
 function mode(m) { page.classList.toggle('photo', m === 'photo'); }
 document.addEventListener('click', function (e) {
@@ -735,7 +885,7 @@ window.addEventListener('message', function (e) {
 });
 dayList(); sections(); tick();
 var H = location.hash;
-setView(/invite/.test(H) ? 'invite' : /open/.test(H) ? 'open' : 'garden');
+setView(/invite/.test(H) ? 'invite' : /open/.test(H) ? 'open' : /compactA/.test(H) ? 'compactA' : /compactB/.test(H) ? 'compactB' : 'garden');
 mode(/photo/.test(H) ? 'photo' : 'text');
 document.body.dataset.bg = (/bg=(\w+)/.exec(H) || [0, 'rockies'])[1];
 if (window.parent !== window) window.parent.postMessage({ ready: 1 }, '*');

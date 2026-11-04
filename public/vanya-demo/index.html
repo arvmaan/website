@@ -20,7 +20,7 @@ body.real .dev.ph { border-radius: 0; box-shadow: none; margin: 0; flex: 1; min-
 body.real .dv { display: none; }
 </style></head><body>
 <div class="tb" role="toolbar" aria-label="Preview controls">
-  <button data-view="garden">Garden walk</button><button data-view="invite">Invitation</button><button data-view="open">Open garden</button>
+  <button data-view="garden">Garden walk</button><button data-view="invite">Invitation</button><button data-view="open">Open garden</button><button data-view="compactA">Compact: card</button><button data-view="compactB">Compact: garden</button>
   <span class="sp"></span>
   <button class="dv" data-dev="both">Desktop + phone</button><button class="dv" data-dev="desk">Desktop</button><button class="dv" data-dev="ph">Phone</button>
   <span class="sp dv"></span>
@@ -38,6 +38,7 @@ var st = { view: 'garden', dev: 'both', mode: 'text', bg: 'rockies' };
 try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; } catch (e) {}
 if (/invite/.test(location.hash)) st.view = 'invite';
 if (/open/.test(location.hash)) st.view = 'open';
+if (/compact[AB]/.test(location.hash)) st.view = /compact[AB]/.exec(location.hash)[0];
 var fd = document.getElementById('fd'), fp = document.getElementById('fp'), d = document.getElementById('d'), p = document.getElementById('p'), stage = document.getElementById('stage');
 /* a frame only loads once it is on screen, so a phone never builds the desktop copy */
 function load(f) { if (f.dataset.on) return; f.dataset.on = 1; if (SITE) f.srcdoc = SITE; else f.src = 'site.html'; }
