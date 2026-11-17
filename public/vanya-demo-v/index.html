@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Vanya &amp; Jasneal</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: #E9ECE8; color: #26302A; font: 500 .84rem/1 system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; flex-direction: column; overflow: hidden; }
+.tb { flex: none; display: flex; gap: 6px; align-items: center; padding: 8px 12px; background: #fff; border-bottom: 1px solid #0000001a; overflow-x: auto; scrollbar-width: none; }
+.tb .sp { flex: none; width: 1px; height: 22px; background: #0000001f; margin: 0 6px; }
+.tb button { flex: none; font: inherit; color: inherit; background: none; border: 1px solid #00000029; border-radius: 999px; padding: 9px 13px; cursor: pointer; white-space: nowrap; }
+.tb button[aria-pressed="true"] { background: #26302A; color: #fff; border-color: #26302A; }
+#stage { flex: 1; min-height: 0; position: relative; display: flex; justify-content: center; align-items: flex-start; gap: 24px; padding: 14px; }
+.dev { flex: none; position: relative; }
+.dev iframe { position: absolute; left: 0; top: 0; border: 0; background: #fff; transform-origin: 0 0; }
+.dev.desk { border-radius: 10px; overflow: hidden; box-shadow: 0 10px 34px #0000002e, 0 0 0 1px #00000024; }
+.dev.ph { border-radius: 38px; overflow: hidden; box-shadow: 0 10px 34px #0000003d, 0 0 0 9px #1B1D1C; margin: 9px; }
+.dev[hidden] { display: none; }
+body.real #stage { padding: 0; }
+body.real .dev.ph { border-radius: 0; box-shadow: none; margin: 0; flex: 1; min-width: 0; }
+body.real .dv { display: none; }
+.lab { flex: none; font-weight: 600; padding: 0 8px 0 4px; color: #8E1F3F; } .lab:empty { display: none; }
+.sides { display: contents; } .sides[hidden] { display: none; }
+</style></head><body>
+<div class="tb" role="toolbar" aria-label="Preview controls">
+  <span class="lab" id="lab">Guest list: Vanya’s side</span><span class="sides"><button data-side="">All events</button><button data-side="v">Vanya’s side</button><button data-side="j">Jasneal’s side</button><button data-side="w">Wedding + reception</button><span class="sp"></span></span>
+  <button data-view="garden">Garden walk</button><button data-view="invite">Invitation</button><button data-view="open">Open garden</button><button data-view="compactB">Open garden – compact events</button><button data-view="compactA">Compact: card</button><button data-view="days">Day by day</button><button data-view="paper">Stationery</button><button data-view="paper2">Stationery 2</button>
+  <span class="sp"></span>
+  <button class="dv" data-dev="both">Desktop + phone</button><button class="dv" data-dev="desk">Desktop</button><button class="dv" data-dev="ph">Phone</button>
+  <span class="sp dv"></span>
+  <button data-bg="rockies">Rockies: glacier</button><button data-bg="rockies2">Rockies: peaks</button><button data-bg="amber">Amber palace</button>
+  <span class="sp"></span>
+  <button data-mode="photo" id="ph">Photo in window</button><span class="sp art"></span><button class="art" data-art="new">Art: new</button><button class="art" data-art="orig">Art: original</button>
+</div>
+<div id="stage">
+  <div class="dev desk" id="d"><iframe title="Desktop preview" id="fd" width="1440" height="900"></iframe></div>
+  <div class="dev ph" id="p"><iframe title="Phone preview" id="fp" width="390" height="844"></iframe></div>
+</div>
+<script>
+var SITE = null;
+var st = { view: 'garden', dev: 'both', mode: 'text', bg: 'rockies', art: 'new', side: '' };
+try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg', 'art', 'side'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; if (st.view === 'open2') st.view = 'open'; } catch (e) {}
+if (/invite/.test(location.hash)) st.view = 'invite';
+if (/open/.test(location.hash)) st.view = 'open';
+if (/days/.test(location.hash)) st.view = 'days';
+if (/paper/.test(location.hash)) st.view = /paper2/.test(location.hash) ? 'paper2' : 'paper';
+if (/compact[AB]/.test(location.hash)) st.view = /compact[AB]/.exec(location.hash)[0];
+var fd = document.getElementById('fd'), fp = document.getElementById('fp'), d = document.getElementById('d'), p = document.getElementById('p'), stage = document.getElementById('stage');
+/* a frame only loads once it is on screen, so a phone never builds the desktop copy */
+/* the preview can show any guest list: the site reads its list from one line */
+function src() { return SITE.replace("var SIDE = '';", "var SIDE = '" + st.side + "';"); }
+function load(f) { if (f.dataset.on) return; f.dataset.on = 1; if (SITE) f.srcdoc = src(); else f.src = 'site.html'; }
+function send(m) { [fd, fp].forEach(function (f) { if (f.dataset.on && f.contentWindow) f.contentWindow.postMessage(m, '*'); }); }
+function layout() {
+  var real = innerWidth < 760, dev = real ? 'ph' : st.dev;
+  document.body.classList.toggle('real', real);
+  d.hidden = dev === 'ph'; p.hidden = dev === 'desk';
+  if (!d.hidden) load(fd);
+  if (!p.hidden) load(fp);
+  var H = stage.clientHeight - (real ? 0 : 28), W = stage.clientWidth - (real ? 0 : 28);
+  if (real) { p.style.width = '100%'; p.style.height = H + 'px'; fp.removeAttribute('width'); fp.height = H; fp.style.cssText = 'width:1px;min-width:100%;transform:none'; return; }
+  fp.style.cssText = ''; fp.width = 390; fp.height = 844;
+  var sp = Math.min(1, (H - 18) / 844), ph = dev === 'desk' ? 0 : 390 * sp + 18 + 24;
+  var sd = Math.min(1, H / 900, (W - ph) / 1440);
+  fd.style.transform = 'scale(' + sd + ')'; d.style.width = 1440 * sd + 'px'; d.style.height = 900 * sd + 'px';
+  fp.style.transform = 'scale(' + sp + ')'; p.style.width = 390 * sp + 'px'; p.style.height = 844 * sp + 'px';
+}
+function sync() {
+  document.querySelectorAll('[data-view]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === st.view)); });
+  document.querySelectorAll('[data-dev]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.dev === st.dev)); });
+  document.querySelectorAll('[data-bg]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bg === st.bg)); });
+  document.querySelectorAll('[data-art]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.art === st.art)); });
+  document.querySelectorAll('.art').forEach(function (b) { b.hidden = !SITE; });
+  document.querySelector('.sides').hidden = !SITE;
+  document.querySelectorAll('[data-side]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.side === st.side)); });
+  var ph = document.getElementById('ph'); ph.setAttribute('aria-pressed', String(st.mode === 'photo')); ph.hidden = st.view !== 'garden';
+  try { localStorage.setItem('vj-preview', JSON.stringify(st)); } catch (e) {}
+  layout();
+}
+document.querySelector('.tb').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.view) { st.view = b.dataset.view; send({ view: st.view }); }
+  else if (b.dataset.bg) { st.bg = b.dataset.bg; send({ bg: st.bg }); }
+  else if (b.dataset.art) { st.art = b.dataset.art; send({ art: st.art }); }
+  else if (b.dataset.side !== undefined) { if (st.side !== b.dataset.side) { st.side = b.dataset.side; [fd, fp].forEach(function (f) { if (f.dataset.on) f.srcdoc = src(); }); } }
+  else if (b.dataset.dev) st.dev = b.dataset.dev;
+  else if (b.dataset.mode) { st.mode = st.mode === 'photo' ? 'text' : 'photo'; send({ mode: st.mode }); }
+  sync();
+});
+window.addEventListener('message', function (e) { if (e.data && e.data.ready) e.source.postMessage({ view: st.view, mode: st.mode, bg: st.bg, art: st.art }, '*'); });
+window.addEventListener('resize', layout);
+sync();
+</script></body></html>
