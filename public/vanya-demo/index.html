@@ -20,13 +20,13 @@ body.real .dev.ph { border-radius: 0; box-shadow: none; margin: 0; flex: 1; min-
 body.real .dv { display: none; }
 </style></head><body>
 <div class="tb" role="toolbar" aria-label="Preview controls">
-  <button data-view="garden">Garden walk</button><button data-view="invite">Invitation</button><button data-view="open">Open garden</button><button data-view="compactA">Compact: card</button><button data-view="compactB">Compact: garden</button>
+  <button data-view="garden">Garden walk</button><button data-view="invite">Invitation</button><button data-view="open">Open garden</button><button data-view="compactB">Open garden – compact events</button><button data-view="compactA">Compact: card</button><button data-view="days">Day by day</button><button data-view="paper">Stationery</button><button data-view="paper2">Stationery 2</button>
   <span class="sp"></span>
   <button class="dv" data-dev="both">Desktop + phone</button><button class="dv" data-dev="desk">Desktop</button><button class="dv" data-dev="ph">Phone</button>
   <span class="sp dv"></span>
   <button data-bg="rockies">Rockies: glacier</button><button data-bg="rockies2">Rockies: peaks</button><button data-bg="amber">Amber palace</button>
   <span class="sp"></span>
-  <button data-mode="photo" id="ph">Photo in window</button>
+  <button data-mode="photo" id="ph">Photo in window</button><span class="sp art"></span><button class="art" data-art="new">Art: new</button><button class="art" data-art="orig">Art: original</button>
 </div>
 <div id="stage">
   <div class="dev desk" id="d"><iframe title="Desktop preview" id="fd" width="1440" height="900"></iframe></div>
@@ -34,10 +34,12 @@ body.real .dv { display: none; }
 </div>
 <script>
 var SITE = null;
-var st = { view: 'garden', dev: 'both', mode: 'text', bg: 'rockies' };
-try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; } catch (e) {}
+var st = { view: 'garden', dev: 'both', mode: 'text', bg: 'rockies', art: 'new' };
+try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg', 'art'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; if (st.view === 'open2') st.view = 'open'; } catch (e) {}
 if (/invite/.test(location.hash)) st.view = 'invite';
 if (/open/.test(location.hash)) st.view = 'open';
+if (/days/.test(location.hash)) st.view = 'days';
+if (/paper/.test(location.hash)) st.view = /paper2/.test(location.hash) ? 'paper2' : 'paper';
 if (/compact[AB]/.test(location.hash)) st.view = /compact[AB]/.exec(location.hash)[0];
 var fd = document.getElementById('fd'), fp = document.getElementById('fp'), d = document.getElementById('d'), p = document.getElementById('p'), stage = document.getElementById('stage');
 /* a frame only loads once it is on screen, so a phone never builds the desktop copy */
@@ -61,6 +63,8 @@ function sync() {
   document.querySelectorAll('[data-view]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === st.view)); });
   document.querySelectorAll('[data-dev]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.dev === st.dev)); });
   document.querySelectorAll('[data-bg]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bg === st.bg)); });
+  document.querySelectorAll('[data-art]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.art === st.art)); });
+  document.querySelectorAll('.art').forEach(function (b) { b.hidden = !SITE; });
   var ph = document.getElementById('ph'); ph.setAttribute('aria-pressed', String(st.mode === 'photo')); ph.hidden = st.view !== 'garden';
   try { localStorage.setItem('vj-preview', JSON.stringify(st)); } catch (e) {}
   layout();
@@ -69,11 +73,12 @@ document.querySelector('.tb').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
   if (b.dataset.view) { st.view = b.dataset.view; send({ view: st.view }); }
   else if (b.dataset.bg) { st.bg = b.dataset.bg; send({ bg: st.bg }); }
+  else if (b.dataset.art) { st.art = b.dataset.art; send({ art: st.art }); }
   else if (b.dataset.dev) st.dev = b.dataset.dev;
   else if (b.dataset.mode) { st.mode = st.mode === 'photo' ? 'text' : 'photo'; send({ mode: st.mode }); }
   sync();
 });
-window.addEventListener('message', function (e) { if (e.data && e.data.ready) e.source.postMessage({ view: st.view, mode: st.mode, bg: st.bg }, '*'); });
+window.addEventListener('message', function (e) { if (e.data && e.data.ready) e.source.postMessage({ view: st.view, mode: st.mode, bg: st.bg, art: st.art }, '*'); });
 window.addEventListener('resize', layout);
 sync();
 </script></body></html>
