@@ -22,7 +22,7 @@ body.real .dv { display: none; }
 </style></head><body>
 <div class="tb" role="toolbar" aria-label="Preview controls">
   <span class="lab" id="lab"></span>
-  <button data-view="open">Open garden</button><button data-view="compactB">Open garden – compact events</button><button data-view="paper">High Tea</button>
+  <button data-view="open">Open garden</button><button data-view="compactB">Open garden – compact events</button><button data-view="cards">Stationery</button><button data-view="paper">High Tea</button>
   <span class="sp hero"></span><button class="hero" data-hero="low">Arch: low res</button><button class="hero" data-hero="hi">Arch: hi res</button><button class="hero" data-hero="mango">Arch: hi res, mango</button>
   <span class="sp"></span>
   <button class="dv" data-dev="both">Desktop + phone</button><button class="dv" data-dev="desk">Desktop</button><button class="dv" data-dev="ph">Phone</button>
@@ -41,9 +41,10 @@ var st = { view: 'open', dev: 'both', mode: 'text', bg: 'rockies', art: 'new', s
 try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg', 'art', 'side', 'hero'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; if (st.view === 'open2') st.view = 'open'; if (!/^(low|hi|mango)$/.test(st.hero)) st.hero = 'low'; } catch (e) {}
 if (/open/.test(location.hash)) st.view = 'open';
 if (/paper|tea/.test(location.hash)) st.view = 'paper';
+if (/cards/.test(location.hash)) st.view = 'cards';
 if (/compactB/.test(location.hash)) st.view = 'compactB';
 /* three views made the cut; anything else stored falls back to Open garden. Always all events. */
-if (!/^(open|compactB|paper)$/.test(st.view)) st.view = 'open';
+if (!/^(open|compactB|cards|paper)$/.test(st.view)) st.view = 'open';
 st.side = '';
 var fd = document.getElementById('fd'), fp = document.getElementById('fp'), d = document.getElementById('d'), p = document.getElementById('p'), stage = document.getElementById('stage');
 /* a frame only loads once it is on screen, so a phone never builds the desktop copy */

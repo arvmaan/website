@@ -1450,14 +1450,14 @@ function setView(v) {
   if (v === view) return; view = v;
   document.body.classList.toggle('invite', v === 'invite');
   document.body.classList.toggle('compact', /^compact/.test(v));
-  document.body.classList.toggle('paper', v === 'paper' || v === 'paper2');
+  document.body.classList.toggle('paper', v === 'paper' || v === 'paper2' || v === 'cards');
   /* 'paper' is now the first, pinker stationery 2, kept to compare; 'paper2' the one with more colour */
   document.body.classList.toggle('paper2', v === 'paper2' || v === 'paper');
   document.body.classList.toggle('old', v === 'paper');
   var o2 = v === 'compactB' || v === 'paper2' || v === 'paper', was = document.body.classList.contains('o2');
   document.body.classList.toggle('o2', o2); document.body.classList.toggle('o2p', v === 'paper2' || v === 'paper');
   if (o2) o2Events(); else if (was) dayList();
-  (v === 'invite' ? invite : v === 'open' ? openGarden2 : v === 'compactA' ? compactCard : v === 'compactB' ? openGarden2 : v === 'days' ? dayByDay : v === 'paper' ? stationery2 : v === 'paper2' ? stationery2 : garden)(home);
+  (v === 'invite' ? invite : v === 'open' ? openGarden2 : v === 'compactA' ? compactCard : v === 'compactB' ? openGarden2 : v === 'days' ? dayByDay : v === 'cards' ? stationery : v === 'paper' ? stationery2 : v === 'paper2' ? stationery2 : garden)(home);
 }
 function mode(m) { page.classList.toggle('photo', m === 'photo'); }
 document.addEventListener('click', function (e) {
@@ -1475,7 +1475,7 @@ window.addEventListener('message', function (e) {
 var H = location.hash;
 document.body.dataset.art = /art=orig/.test(H) ? 'orig' : 'new';
 dayList(); sections(); tick();
-setView(/invite/.test(H) ? 'invite' : /open/.test(H) ? 'open' : /compactA/.test(H) ? 'compactA' : /compactB/.test(H) ? 'compactB' : /days/.test(H) ? 'days' : /paper2/.test(H) ? 'paper2' : /paper/.test(H) ? 'paper' : 'garden');
+setView(/invite/.test(H) ? 'invite' : /open/.test(H) ? 'open' : /compactA/.test(H) ? 'compactA' : /compactB/.test(H) ? 'compactB' : /days/.test(H) ? 'days' : /cards/.test(H) ? 'cards' : /paper2/.test(H) ? 'paper2' : /paper/.test(H) ? 'paper' : 'garden');
 mode(/photo/.test(H) ? 'photo' : 'text');
 document.body.dataset.bg = (/bg=(\w+)/.exec(H) || [0, 'rockies'])[1];
 if (window.parent !== window) window.parent.postMessage({ ready: 1 }, '*');
