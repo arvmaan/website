@@ -24,6 +24,7 @@ body.real .dv { display: none; }
   <span class="lab" id="lab"></span>
   <button data-view="open">Open garden</button><button data-view="compactB">Open garden – compact events</button><button data-view="cards">Stationery</button><button data-view="paper">High Tea</button>
   <span class="sp hero"></span><button class="hero" data-hero="low">Arch: low res</button><button class="hero" data-hero="hi">Arch: hi res</button><button class="hero" data-hero="mango">Arch: hi res, mango</button>
+  <span class="sp pat"></span><button class="pat" data-pat="chintz">Pattern: chintz</button><button class="pat" data-pat="poppy">Mughal poppy vine</button><button class="pat" data-pat="poppyrow">Poppy row</button><button class="pat" data-pat="paisley">Paisley chintz</button><button class="pat" data-pat="kalam">Kalamkari</button>
   <span class="sp"></span>
   <button class="dv" data-dev="both">Desktop + phone</button><button class="dv" data-dev="desk">Desktop</button><button class="dv" data-dev="ph">Phone</button>
   <span class="sp dv"></span>
@@ -37,8 +38,8 @@ body.real .dv { display: none; }
 </div>
 <script>
 var SITE = null;
-var st = { view: 'open', dev: 'both', mode: 'text', bg: 'rockies', art: 'new', side: '', hero: 'low' };
-try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg', 'art', 'side', 'hero'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; if (st.view === 'open2') st.view = 'open'; if (!/^(low|hi|mango)$/.test(st.hero)) st.hero = 'low'; } catch (e) {}
+var st = { view: 'open', dev: 'both', mode: 'text', bg: 'rockies', art: 'new', side: '', hero: 'low', pat: 'chintz' };
+try { var s0 = JSON.parse(localStorage.getItem('vj-preview') || '{}'); ['view', 'dev', 'mode', 'bg', 'art', 'side', 'hero', 'pat'].forEach(function (k) { if (s0[k]) st[k] = s0[k]; }); if (st.view === 'arcade') st.view = 'garden'; if (st.view === 'open2') st.view = 'open'; if (!/^(low|hi|mango)$/.test(st.hero)) st.hero = 'low'; } catch (e) {}
 if (/open/.test(location.hash)) st.view = 'open';
 if (/paper|tea/.test(location.hash)) st.view = 'paper';
 if (/cards/.test(location.hash)) st.view = 'cards';
@@ -72,6 +73,8 @@ function sync() {
   document.querySelectorAll('[data-bg]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bg === st.bg)); });
   document.querySelectorAll('[data-hero]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.hero === st.hero)); });
   document.querySelectorAll('.hero').forEach(function (b) { b.hidden = st.view !== 'paper'; });
+  document.querySelectorAll('[data-pat]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.pat === st.pat)); });
+  document.querySelectorAll('.pat').forEach(function (b) { b.hidden = !SITE || st.view !== 'paper'; });
   document.querySelectorAll('[data-art]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.art === st.art)); });
   document.querySelectorAll('.art').forEach(function (b) { b.hidden = !SITE; });
   var ph = document.getElementById('ph'); ph.setAttribute('aria-pressed', String(st.mode === 'photo')); ph.hidden = st.view !== 'garden';
@@ -84,11 +87,12 @@ document.querySelector('.tb').addEventListener('click', function (e) {
   else if (b.dataset.bg) { st.bg = b.dataset.bg; send({ bg: st.bg }); }
   else if (b.dataset.art) { st.art = b.dataset.art; send({ art: st.art }); }
   else if (b.dataset.hero) { st.hero = b.dataset.hero; send({ hero: st.hero }); }
+  else if (b.dataset.pat) { st.pat = b.dataset.pat; send({ pat: st.pat }); }
   else if (b.dataset.dev) st.dev = b.dataset.dev;
   else if (b.dataset.mode) { st.mode = st.mode === 'photo' ? 'text' : 'photo'; send({ mode: st.mode }); }
   sync();
 });
-window.addEventListener('message', function (e) { if (e.data && e.data.ready) e.source.postMessage({ view: st.view, mode: st.mode, bg: st.bg, art: st.art, hero: st.hero }, '*'); });
+window.addEventListener('message', function (e) { if (e.data && e.data.ready) e.source.postMessage({ view: st.view, mode: st.mode, bg: st.bg, art: st.art, hero: st.hero, pat: st.pat }, '*'); });
 window.addEventListener('resize', layout);
 sync();
 </script></body></html>
