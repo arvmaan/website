@@ -1571,7 +1571,7 @@ var EV = [
 ];
 /* each guest list sees only its own events: '' everyone, v Vanya's side, j Jasneal's side, w wedding and reception */
 var SIDE = '';
-var RSVP_URL = '';
+var RSVP_URL = 'https://script.google.com/macros/s/AKfycbyu7XN7GkZqVOhMBh7Ere0atHyyFKxWhY0eP0BL6IX9jBEWrtuXuCW8I-v3HHwShxU/exec';
 var PROD = '1' === '1';   /* the real site (prod/): North Head by default, with a small switch to Lake of Zug in the header */   /* the Google Apps Script web-app URL, from rsvp-url.txt at build time; empty = preview, nothing is sent */
 if (SIDE) EV = EV.filter(function (e) { return e.who.indexOf(SIDE) >= 0; });
 /* on Vanya's list the Singhs' Cocktail Hour comes first on Sangeet day, on the same card */
