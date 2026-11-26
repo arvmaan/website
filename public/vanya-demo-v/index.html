@@ -114,7 +114,7 @@ window.addEventListener('resize', layout);
 sync();
 
 (function () { var r = document.getElementById('zugx'), o = document.getElementById('zugxv');
-  st.zugx = 30; r.value = 30; o.textContent = '30%';
+  st.zugx = 40; r.value = 40; o.textContent = '40%';
   r.addEventListener('input', function () { st.zugx = +r.value; o.textContent = r.value + '%'; send({ zugx: st.zugx }); }); })();
 (function () { var r = document.getElementById('lyop'), o = document.getElementById('lyopv');
   if (typeof st.lyop !== 'number') st.lyop = 70; r.value = st.lyop; o.textContent = st.lyop + '%';
